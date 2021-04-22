@@ -2,13 +2,12 @@
 {
     public abstract class AMessage
     {
-        public EMessageType MessageType { get; }
-
+        public abstract EMessageType MessageType { get; }
         public EMessagePurpose MessagePurpose { get; }
 
-        public bool IsValid()
+        protected AMessage(EMessagePurpose messagePurpose)
         {
-            
+            MessagePurpose = messagePurpose;
         }
     }
 }

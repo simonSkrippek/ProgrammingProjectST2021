@@ -1,7 +1,12 @@
 ﻿namespace WhackAStoodent.Runtime.Networking.Messages
 {
-    public class DenyAuthentification
+    public class DenyAuthenticationMessage : AMessage
     {
+        public override EMessageType MessageType => EMessageType.DenyAuthentication;
         
+        public DenyAuthenticationMessage(EMessagePurpose messagePurpose) : base(messagePurpose)
+        {
+            
+        }
     }
 }

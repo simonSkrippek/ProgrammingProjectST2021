@@ -1,6 +1,6 @@
 ﻿namespace WhackAStoodent.Runtime.Networking.Messages
 {
-    public class LookMessage
+    public class LookMessage : AMessage
     {
         
     }

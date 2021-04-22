@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Threading;
 using ENet;
 using UnityEngine;
@@ -20,8 +19,8 @@ namespace WhackAStoodent.Runtime.Networking.Connectors
         
         public bool WasInitializedProperly { get;  }
 
-        private Host _host;
-        private bool _connectedToServerPeer = false;
+        private Host _clientHost;
+        private bool _connectedToServerPeer;
         private Peer _serverPeer;
         
         private readonly string _ipAddress;
@@ -60,43 +59,52 @@ namespace WhackAStoodent.Runtime.Networking.Connectors
 
         public override bool Connect()
         {
-            if (!GetConnectionSettings(out NetworkConnectionSettings network_connection_settings))
-            {
-                return false;
-            }
-
             if (!EnetInitializer.Initialize())
             {
                 return false;
             }
 
-            Host client_host = null;
+            _clientHost = null;
             try
             {
-                client_host = new Host();
-                client_host.Create(1, 0);
+                _clientHost = new Host();
+                _clientHost.Create(1, 0);
 
                 Address address = new Address();
-                address.SetHost(network_connection_settings.ipAddress);
-                address.Port = network_connection_settings.port;
-
-                _serverPeer = client_host.Connect(address);
-
+                address.SetHost(_ipAddress);
+                address.Port = _port;
+                
                 _connectorThread = CreateConnectorThread();
                 _connectorThread.Start();
-
+                
+                _serverPeer = _clientHost.Connect(address);
             }
             catch (Exception e)
             {
                 Console.Error.WriteLine(e);
-                client_host?.Dispose();
-                EnetInitializer.Deinitialize();
+                Dispose();
                 return false;
             }
 
             return true;
         }
-        
+        public override void Disconnect()
+        {
+            if (isConnectorThreadRunning)
+            {
+                _serverPeer.Disconnect((uint)EDisconnectionReason.GameFlow);
+                isConnectorThreadRunning = false;
+                _connectorThread.Join();
+            }
+        }
+        public override void Dispose()
+        {
+            Disconnect();
+            _clientHost?.Dispose();
+            _clientHost = null;
+            EnetInitializer.Deinitialize();
+        }
+
         public override void SendMessage(byte[] message)
         {
             _messagesToSend.Enqueue(new CustomMessageToSend(_serverPeer, 0, message));
@@ -200,7 +208,7 @@ namespace WhackAStoodent.Runtime.Networking.Connectors
         
         private void HandleIncomingMessages()
         {
-            bool HasNetworkEvent(out Event networkEvent) => !(_host.CheckEvents(out networkEvent) > 0 || _host.Service((int) _timeoutTime, out networkEvent) > 0);
+            bool HasNetworkEvent(out Event networkEvent) => !(_clientHost.CheckEvents(out networkEvent) > 0 || _clientHost.Service((int) _timeoutTime, out networkEvent) > 0);
 
             if (HasNetworkEvent(out Event network_event))
             {
@@ -262,7 +270,7 @@ namespace WhackAStoodent.Runtime.Networking.Connectors
         {
             if (_packetsToDispose.Count > 0)
             {
-                _host.Flush();
+                _clientHost.Flush();
                 foreach (Packet packet in _packetsToDispose)
                 {
                     packet.Dispose();
@@ -274,66 +282,5 @@ namespace WhackAStoodent.Runtime.Networking.Connectors
         #endregion
     }
 
-    internal enum EDisconnectionReason
-    {
-        GameFlow,
-        InvalidPeer,
-    }
-
-
-    internal readonly struct ReceivedConnectionAttemptMessage
-    {
-        public Peer Sender { get; }
-
-        public ReceivedConnectionAttemptMessage(Peer sender)
-        {
-            Sender = sender;
-        }
-    }
-
-    internal readonly struct ReceivedDisconnectionMessage
-    {
-        public Peer Sender { get; }
-
-        public ReceivedDisconnectionMessage(Peer sender)
-        {
-            Sender = sender;
-        }
-    }
-
-    internal readonly struct ReceivedTimeOutMessage
-    {
-        public Peer Sender { get; }
-
-        public ReceivedTimeOutMessage(Peer sender)
-        {
-            Sender = sender;
-        }
-    }
-
-    internal readonly struct ReceivedCustomMessage
-    {
-        public Peer Sender { get; }
-        public byte[] Message { get; }
-
-        public ReceivedCustomMessage(Peer peer, byte[] message)
-        {
-            Sender = peer;
-            Message = message;
-        }
-    }
-
-    internal readonly struct CustomMessageToSend
-    {
-        public Peer Recipient { get; }
-        public uint ChannelID { get; }
-        public byte[] Message { get; }
-
-        public CustomMessageToSend(Peer peer, uint channelID, byte[] message)
-        {
-            Recipient = peer;
-            ChannelID = channelID;
-            Message = message;
-        }
-    }
+    
 }

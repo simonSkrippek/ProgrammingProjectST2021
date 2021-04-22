@@ -15,7 +15,14 @@ namespace WhackAStoodent.Runtime.Networking.Connectors
         public abstract event Action ServerConnectionTimedOut;
 
         public abstract event Action<AMessage> ReceivedMessageFromServer;
-
+      
+        
+        public abstract bool Connect();
+        public abstract void Disconnect();
+        public abstract void Dispose();
+        public abstract void SendMessage(byte[] message);
+        public abstract void RaiseEventsForReleasedMessages();
+        
         
         protected bool GetConnectionSettings<TConnectionSettingsType>(out TConnectionSettingsType connectionSettings) where TConnectionSettingsType : AConnectionSettings
         {
@@ -41,11 +48,5 @@ namespace WhackAStoodent.Runtime.Networking.Connectors
             connectionSettings = AssetDatabase.LoadAssetAtPath<TConnectionSettingsType>(first_found_asset_path);
             return connectionSettings;
         }
-
-        public abstract bool Connect();
-        public abstract bool Disconnect();
-        public abstract bool Dispose();
-        public abstract void SendMessage(byte[] message);
-        public abstract void RaiseEventsForReleasedMessages();
     }
 }

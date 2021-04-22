@@ -1,7 +1,16 @@
-﻿namespace WhackAStoodent.Runtime.Networking.Messages
+﻿using UnityEngine;
+
+namespace WhackAStoodent.Runtime.Networking.Messages
 {
-    public class HitMessage
+    public class HitMessage : AMessage
     {
+        public readonly Vector2 _position;
         
+        public HitMessage(EMessagePurpose messagePurpose, Vector2 position) : base(messagePurpose)
+        {
+            _position = position;
+        }
+
+        public override EMessageType MessageType => EMessageType.Hit;
     }
 }
