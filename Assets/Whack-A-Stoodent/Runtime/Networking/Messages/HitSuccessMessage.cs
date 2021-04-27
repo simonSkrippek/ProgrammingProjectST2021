@@ -5,10 +5,10 @@ namespace WhackAStoodent.Runtime.Networking.Messages
     public class HitSuccessMessage : AMessage
     {
         public readonly EHoleIndex _holeIndex;
-        public readonly int _pointsGained;
+        public readonly long _pointsGained;
         public readonly Vector2 _hitPosition;
         
-        public HitSuccessMessage(EMessagePurpose messagePurpose, EHoleIndex holeIndex, int pointsGained, Vector2 hitPosition) : base(messagePurpose)
+        public HitSuccessMessage(EHoleIndex holeIndex, long pointsGained, Vector2 hitPosition) : base()
         {
             _holeIndex = holeIndex;
             _pointsGained = pointsGained;

@@ -2,7 +2,7 @@
 {
     public class AcceptPlayRequestMessage : AMessage
     {
-        public AcceptPlayRequestMessage(EMessagePurpose messagePurpose) : base(messagePurpose)
+        public AcceptPlayRequestMessage() : base()
         {
         }
 

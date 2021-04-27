@@ -3,11 +3,10 @@
     public abstract class AMessage
     {
         public abstract EMessageType MessageType { get; }
-        public EMessagePurpose MessagePurpose { get; }
 
-        protected AMessage(EMessagePurpose messagePurpose)
+        protected AMessage()
         {
-            MessagePurpose = messagePurpose;
+            
         }
     }
 }

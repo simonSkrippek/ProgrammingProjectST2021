@@ -2,7 +2,7 @@
 {
     public class LoadedGameMessage : AMessage
     {
-        public LoadedGameMessage(EMessagePurpose messagePurpose) : base(messagePurpose)
+        public LoadedGameMessage() : base()
         {
         }
 

@@ -2,7 +2,7 @@
 {
     public class HideMessage : AMessage
     {
-        public HideMessage(EMessagePurpose messagePurpose) : base(messagePurpose)
+        public HideMessage() : base()
         {
         }
 

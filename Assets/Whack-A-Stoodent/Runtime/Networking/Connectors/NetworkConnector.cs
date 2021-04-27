@@ -3,7 +3,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using ENet;
+using UnityEditor.VersionControl;
 using UnityEngine;
+using WhackAStoodent.Runtime.Networking.ENet;
 using WhackAStoodent.Runtime.Networking.Messages;
 using Event = ENet.Event;
 using EventType = ENet.EventType;
@@ -110,7 +112,15 @@ namespace WhackAStoodent.Runtime.Networking.Connectors
             _messagesToSend.Enqueue(new CustomMessageToSend(_serverPeer, 0, message));
         }
 
-        public override void RaiseEventsForReleasedMessages()
+        public override void SendMessage(AMessage message)
+        {
+            if (MessageParser.ParseMessage(message, out byte[] message_bytes))
+                SendMessage(message_bytes);
+            else
+                Debug.LogError($"Message of type {message.GetType()} could not be parsed and thus not sent to the server.");
+        }
+
+        public override void RaiseEventsForReceivedMessages()
         {
             while (_peerConnectionAttemptMessages.TryDequeue(out ReceivedConnectionAttemptMessage connection_attempt_message))
             {
@@ -134,6 +144,7 @@ namespace WhackAStoodent.Runtime.Networking.Connectors
                     ReceivedMessageFromServer?.Invoke(parsed_message);
             }
         }
+
         private bool HandlePeerConnectionAttempt(ReceivedConnectionAttemptMessage connectionAttemptMessage)
         {
             if (IsServerPeer(connectionAttemptMessage.Sender))

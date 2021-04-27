@@ -9,7 +9,7 @@ namespace WhackAStoodent.Runtime.Networking.Messages
         public readonly Guid _userID;
         public readonly string _userName;
         
-        public AcknowledgeAuthenticationMessage(EMessagePurpose messagePurpose, Guid userID, string userName) : base(messagePurpose)
+        public AcknowledgeAuthenticationMessage(Guid userID, string userName) : base()
         {
             _userID = userID;
             _userName = userName;

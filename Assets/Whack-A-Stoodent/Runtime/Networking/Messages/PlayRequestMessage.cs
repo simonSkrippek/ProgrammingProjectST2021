@@ -5,7 +5,7 @@
         public readonly GameRole _playerGameRole;
         public readonly string _opponentName;
         
-        public PlayRequestMessage(EMessagePurpose messagePurpose, GameRole playerGameRole, string opponentName) : base(messagePurpose)
+        public PlayRequestMessage(GameRole playerGameRole, string opponentName) : base()
         {
             _playerGameRole = playerGameRole;
             _opponentName = opponentName;

@@ -2,7 +2,7 @@
 {
     public class GetMatchHistoryMessage : AMessage
     {
-        public GetMatchHistoryMessage(EMessagePurpose messagePurpose) : base(messagePurpose)
+        public GetMatchHistoryMessage() : base()
         {
         }
 

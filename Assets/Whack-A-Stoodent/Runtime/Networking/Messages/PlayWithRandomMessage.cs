@@ -2,7 +2,7 @@
 {
     public class PlayWithRandomMessage : AMessage
     {
-        public PlayWithRandomMessage(EMessagePurpose messagePurpose) : base(messagePurpose)
+        public PlayWithRandomMessage() : base()
         {
         }
 

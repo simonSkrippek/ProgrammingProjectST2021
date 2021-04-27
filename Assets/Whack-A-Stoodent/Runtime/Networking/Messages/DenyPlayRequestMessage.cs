@@ -2,16 +2,16 @@
 {
     public class DenyPlayRequestMessage : AMessage
     {
-        public readonly DenialReason _denialReason;
+        public readonly EDenialReason _denialReason;
         
-        public DenyPlayRequestMessage(EMessagePurpose messagePurpose, DenialReason denialReason) : base(messagePurpose)
+        public DenyPlayRequestMessage(EDenialReason denialReason) : base()
         {
             _denialReason = denialReason;
         }
 
         public override EMessageType MessageType => EMessageType.DenyPlayRequest;
         
-        public enum DenialReason
+        public enum EDenialReason
         {
             PlayerChoice,
         }

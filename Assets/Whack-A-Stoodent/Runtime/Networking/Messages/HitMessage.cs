@@ -6,7 +6,7 @@ namespace WhackAStoodent.Runtime.Networking.Messages
     {
         public readonly Vector2 _position;
         
-        public HitMessage(EMessagePurpose messagePurpose, Vector2 position) : base(messagePurpose)
+        public HitMessage(Vector2 position) : base()
         {
             _position = position;
         }

@@ -4,7 +4,7 @@
     {
         public readonly MatchData _matchData;
         
-        public GameEndedMessage(EMessagePurpose messagePurpose, MatchData matchData) : base(messagePurpose)
+        public GameEndedMessage(MatchData matchData) : base()
         {
             _matchData = matchData;
         }

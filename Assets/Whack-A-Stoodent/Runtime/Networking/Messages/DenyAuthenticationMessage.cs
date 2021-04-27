@@ -4,7 +4,7 @@
     {
         public override EMessageType MessageType => EMessageType.DenyAuthentication;
         
-        public DenyAuthenticationMessage(EMessagePurpose messagePurpose) : base(messagePurpose)
+        public DenyAuthenticationMessage() : base()
         {
             
         }

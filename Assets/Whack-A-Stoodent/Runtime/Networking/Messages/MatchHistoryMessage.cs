@@ -6,7 +6,7 @@ namespace WhackAStoodent.Runtime.Networking.Messages
     {
         public readonly MatchData[] _matchData;
         
-        public MatchHistoryMessage(EMessagePurpose messagePurpose, MatchData[] matchData) : base(messagePurpose)
+        public MatchHistoryMessage(MatchData[] matchData) : base()
         {
             _matchData = matchData;
         }

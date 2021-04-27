@@ -10,7 +10,7 @@ namespace WhackAStoodent.Runtime.Networking.Messages
         public readonly Guid _userID;
         public readonly string _userName;
 
-        public AuthenticateMessage(EMessagePurpose messagePurpose, Guid? userID = null, [CanBeNull] string userName = null) : base(messagePurpose)
+        public AuthenticateMessage(Guid? userID = null, [CanBeNull] string userName = null) : base()
         {
             _userID = userID ?? new Guid(new byte[16]);
             _userName = userName;

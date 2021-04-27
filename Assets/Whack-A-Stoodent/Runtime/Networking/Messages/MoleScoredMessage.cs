@@ -2,11 +2,11 @@
 {
     public class MoleScoredMessage : AMessage
     {
-        public readonly int _points;
+        public readonly long _pointsGained;
         
-        public MoleScoredMessage(EMessagePurpose messagePurpose, int points) : base(messagePurpose)
+        public MoleScoredMessage(long pointsGained) : base()
         {
-            _points = points;
+            _pointsGained = pointsGained;
         }
 
         public override EMessageType MessageType => EMessageType.MoleScored;

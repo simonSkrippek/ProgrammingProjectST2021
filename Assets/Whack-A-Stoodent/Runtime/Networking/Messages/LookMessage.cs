@@ -4,7 +4,7 @@
     {
         public readonly EHoleIndex _holeIndex;
         
-        public LookMessage(EMessagePurpose messagePurpose, EHoleIndex holeIndex) : base(messagePurpose)
+        public LookMessage(EHoleIndex holeIndex) : base()
         {
             _holeIndex = holeIndex;
         }

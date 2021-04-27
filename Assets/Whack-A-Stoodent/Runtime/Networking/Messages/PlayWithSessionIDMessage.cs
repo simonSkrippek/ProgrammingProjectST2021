@@ -4,7 +4,7 @@
     {
         public readonly string _sessionID;
         
-        public PlayWithSessionIDMessage(EMessagePurpose messagePurpose, string sessionID) : base(messagePurpose)
+        public PlayWithSessionIDMessage(string sessionID) : base()
         {
             _sessionID = sessionID;
         }
