@@ -17,10 +17,8 @@ namespace WhackAStoodent.Runtime.Networking.Messages
                     break;
                 case EMessageType.AcknowledgeAuthentication:
                     throw new ArgumentException("should not need to parse a message with messageType 'AcknowledgeAuthentication' in this direction (message to byte)");
-                    break;
                 case EMessageType.DenyAuthentication:
                     throw new ArgumentException("should not need to parse a message with messageType 'DenyAuthentication' in this direction (message to byte)");
-                    break;
                 case EMessageType.Ping:
                     if (TryParsePingMessage(messageToParse, out messageBytes)) return true;
                     break;
@@ -32,7 +30,6 @@ namespace WhackAStoodent.Runtime.Networking.Messages
                     break;
                 case EMessageType.MatchHistory:
                     throw new ArgumentException("should not need to parse a message with messageType 'MatchHistory' in this direction (message to byte)");
-                    break;
                 case EMessageType.PlayWithRandom:
                     if (TryParsePlayWithRandomMessage(messageToParse, out messageBytes)) return true;
                     break;
@@ -41,7 +38,6 @@ namespace WhackAStoodent.Runtime.Networking.Messages
                     break;
                 case EMessageType.PlayRequest:
                     throw new ArgumentException("should not need to parse a message with messageType 'PlayRequest' in this direction (message to byte)");
-                    break;
                 case EMessageType.AcceptPlayRequest:
                     if (TryParseAcceptPlayRequestMessage(messageToParse, out messageBytes)) return true;
                     break;
@@ -53,7 +49,6 @@ namespace WhackAStoodent.Runtime.Networking.Messages
                     break;
                 case EMessageType.GameEnded:
                     throw new ArgumentException("should not need to parse a message with messageType 'GameEnded' in this direction (message to byte)");
-                    break;
                 case EMessageType.Hit:
                     if (TryParseHitMessage(messageToParse, out messageBytes)) return true;
                     break;
@@ -65,13 +60,10 @@ namespace WhackAStoodent.Runtime.Networking.Messages
                     break;
                 case EMessageType.HitSuccess:
                     throw new ArgumentException("should not need to parse a message with messageType 'HitSuccess' in this direction (message to byte)");
-                    break;
                 case EMessageType.HitFail:
                     throw new ArgumentException("should not need to parse a message with messageType 'HitFail' in this direction (message to byte)");
-                    break;
                 case EMessageType.MoleScored:
                     throw new ArgumentException("should not need to parse a message with messageType 'MoleScored' in this direction (message to byte)");
-                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -205,7 +197,7 @@ namespace WhackAStoodent.Runtime.Networking.Messages
         }
         private static bool TryParseLoadedGameMessage(AMessage messageToParse, out byte[] messageBytes)
         {
-            if (messageToParse is LoadedGameMessage loaded_game_message_to_parse)
+            if (messageToParse is LoadedGameMessage)
             {
                 int required_number_of_bytes = 1;
                 messageBytes = new byte[required_number_of_bytes];
@@ -278,12 +270,11 @@ namespace WhackAStoodent.Runtime.Networking.Messages
             {
                 case EMessageType.Authenticate:
                     throw new ArgumentException("should not need to parse a message with messageType 'AcknowledgeAuthentication' in this direction (message to byte)");
-                    break;
                 case EMessageType.AcknowledgeAuthentication:
                     if (TryParseAcknowledgeAuthenticationMessage(messageBytes, out parsedMessage)) return true;
                     break;
                 case EMessageType.DenyAuthentication:
-                    if (TryParseDenyAuthenticationMessage(messageBytes, out parsedMessage)) return true;
+                    if (TryParseDenyAuthenticationMessage(out parsedMessage)) return true;
                     break;
                 case EMessageType.Ping:
                     if (TryParsePingMessage(messageBytes, out parsedMessage)) return true;
@@ -293,39 +284,33 @@ namespace WhackAStoodent.Runtime.Networking.Messages
                     break;
                 case EMessageType.GetMatchHistory:
                     throw new ArgumentException("should not need to parse a message with messageType 'AcknowledgeAuthentication' in this direction (message to byte)");
-                    break;
                 case EMessageType.MatchHistory:
                     if (TryParseMatchHistoryMessage(messageBytes, out parsedMessage)) return true;
                     break;
                 case EMessageType.PlayWithRandom:
                     throw new ArgumentException("should not need to parse a message with messageType 'AcknowledgeAuthentication' in this direction (message to byte)");
-                    break;
                 case EMessageType.PlayWithSessionID:
                     throw new ArgumentException("should not need to parse a message with messageType 'AcknowledgeAuthentication' in this direction (message to byte)");
-                    break;
                 case EMessageType.PlayRequest:
                     if (TryParsePlayRequestMessage(messageBytes, out parsedMessage)) return true;
                     break;
                 case EMessageType.AcceptPlayRequest:
                     throw new ArgumentException("should not need to parse a message with messageType 'AcknowledgeAuthentication' in this direction (message to byte)");
-                    break;
                 case EMessageType.DenyPlayRequest:
                     throw new ArgumentException("should not need to parse a message with messageType 'AcknowledgeAuthentication' in this direction (message to byte)");
-                    break;
                 case EMessageType.LoadedGame:
-                    if (TryParseLoadedGameMessage(messageBytes, out parsedMessage)) return true;
+                    if (TryParseLoadedGameMessage(out parsedMessage)) return true;
                     break;
                 case EMessageType.GameEnded:
                     if (TryParseGameEndedMessage(messageBytes, out parsedMessage)) return true;
                     break;
                 case EMessageType.Hit:
                     throw new ArgumentException("should not need to parse a message with messageType 'AcknowledgeAuthentication' in this direction (message to byte)");
-                    break;
                 case EMessageType.Look:
                     if (TryParseLookMessage(messageBytes, out parsedMessage)) return true;
                     break;
                 case EMessageType.Hide:
-                    if (TryParseHideMessage(messageBytes, out parsedMessage)) return true;
+                    if (TryParseHideMessage(out parsedMessage)) return true;
                     break;
                 case EMessageType.HitSuccess:
                     if (TryParseHitSuccessMessage(messageBytes, out parsedMessage)) return true;
@@ -364,7 +349,7 @@ namespace WhackAStoodent.Runtime.Networking.Messages
             parsedMessage = new AcknowledgeAuthenticationMessage(guid, name);
             return true;
         }
-        private static bool TryParseDenyAuthenticationMessage(byte[] messageBytes, out AMessage parsedMessage)
+        private static bool TryParseDenyAuthenticationMessage(out AMessage parsedMessage)
         {
             parsedMessage = new AuthenticateMessage();
             return true;
@@ -409,7 +394,7 @@ namespace WhackAStoodent.Runtime.Networking.Messages
             uint entry_count = BitConverter.ToUInt32(messageBytes, 1);
             if(TryParseMatchData(messageBytes.GetSubArray(5, messageBytes.Length - 5), entry_count, out MatchData[] match_data))
             {
-                parsedMessage = new MatchHistoryMessage(new MatchData[0]);
+                parsedMessage = new MatchHistoryMessage(match_data);
                 return true;
             }
             else
@@ -527,12 +512,11 @@ namespace WhackAStoodent.Runtime.Networking.Messages
                 return false;
             }
             var opponent_name = Encoding.Unicode.GetString(messageBytes.GetSubArray(current_byte_index, opponent_name_bytes));
-            current_byte_index += opponent_name_bytes;
-            
+
             parsedMessage = new PlayRequestMessage(player_game_role, opponent_name);
             return true;
         }
-        private static bool TryParseLoadedGameMessage(byte[] messageBytes, out AMessage parsedMessage)
+        private static bool TryParseLoadedGameMessage(out AMessage parsedMessage)
         {
             parsedMessage = new LoadedGameMessage();
             return true;
@@ -562,7 +546,7 @@ namespace WhackAStoodent.Runtime.Networking.Messages
             parsedMessage = new LookMessage(hole_index);
             return true;
         }
-        private static bool TryParseHideMessage(byte[] messageBytes, out AMessage parsedMessage)
+        private static bool TryParseHideMessage(out AMessage parsedMessage)
         {
             parsedMessage = new HideMessage();
             return true;
