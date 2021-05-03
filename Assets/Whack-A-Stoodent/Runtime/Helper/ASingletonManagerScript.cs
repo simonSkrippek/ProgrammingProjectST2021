@@ -1,13 +1,12 @@
-﻿/// <summary>
-/// Scribble.rs Pad managers namespace
-/// </summary>
-namespace ScribblersPad.Managers
+﻿
+namespace WhackAStoodent.Runtime.Helper
 {
     public abstract class ASingletonManagerScript<T> : AManagerScript<T> where T : AManagerScript<T>
     {
-        protected virtual void Awake()
+        protected override void OnEnable()
         {
-            if ((Instance != null) && (Instance != this))
+            base.OnEnable();
+            if (Instance != this)
             {
                 Destroy(gameObject);
             }
