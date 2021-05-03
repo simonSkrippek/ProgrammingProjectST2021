@@ -28,6 +28,7 @@ namespace WhackAStoodent.Runtime
         public event Action<long> HitterScored;
         public event Action<Vector2> HitterHitFailed; 
         public event Action<long> MoleScored;
+        public event Action<string, EGameRole> GameStarted;
 
         protected override void OnEnable()
         {
@@ -124,6 +125,12 @@ namespace WhackAStoodent.Runtime
                         ReceivedPlayRequest?.Invoke(play_request_message._opponentName, play_request_message._playerGameRole);
                     }
                     break;
+                case EMessageType.StartedGame:
+                    if(message is StartedGameMessage started_game_message)
+                    {
+                        GameStarted?.Invoke(started_game_message._opponentName, started_game_message._playerGameRole);
+                    }
+                    break;
                 case EMessageType.LoadedGame:
                     if(message is LoadedGameMessage)
                     {
@@ -210,6 +217,18 @@ namespace WhackAStoodent.Runtime
         public void ConfirmGameIsLoaded()
         {
             _connector.SendLoadedGameMessage();
+        }
+        public void SendHitterHit(Vector2 position)
+        {
+            _connector.SendHitMessage(position);
+        }
+        public void SendMoleLook(EHoleIndex holeIndex)
+        {
+            _connector.SendLookMessage(holeIndex);
+        }
+        public void SendMoleHide()
+        {
+            _connector.SendHideMessage();
         }
 
         public string LoadUserName() => StorageUtility.LoadClientName();
