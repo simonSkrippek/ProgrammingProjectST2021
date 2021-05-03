@@ -2,6 +2,8 @@
 {
     public enum EMessageType
     {
+        Error,
+        
         Authenticate,
         AcknowledgeAuthentication,
         DenyAuthentication,
@@ -15,6 +17,7 @@
         PlayRequest,
         AcceptPlayRequest,
         DenyPlayRequest,
+        StartedGame,
         LoadedGame,
         GameEnded,
         
@@ -23,6 +26,8 @@
         Hide,
         HitSuccess,
         HitFail,
-        MoleScored
+        MoleScored,
+        
+        Debug = 255,
     }
 }

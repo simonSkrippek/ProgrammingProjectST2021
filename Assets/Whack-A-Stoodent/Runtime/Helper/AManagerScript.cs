@@ -1,9 +1,6 @@
 using UnityEngine;
 
-/// <summary>
-/// Scribble.rs Pad managers namespace
-/// </summary>
-namespace ScribblersPad.Managers
+namespace WhackAStoodent.Runtime.Helper
 {
     /// <summary>
     /// An abstract class that describes a manager script

@@ -1,22 +1,18 @@
 ﻿namespace WhackAStoodent.Runtime.Networking.Messages
 {
-    public class PlayRequestMessage : AMessage
+    public partial class PlayRequestMessage : AMessage
     {
-        public readonly GameRole _playerGameRole;
+        public readonly EGameRole _playerGameRole;
         public readonly string _opponentName;
+        public readonly string _sessionCode;
         
-        public PlayRequestMessage(GameRole playerGameRole, string opponentName) : base()
+        public PlayRequestMessage(EGameRole playerGameRole, string opponentName, string sessionCode) : base()
         {
             _playerGameRole = playerGameRole;
             _opponentName = opponentName;
+            _sessionCode = sessionCode;
         }
 
         public override EMessageType MessageType => EMessageType.PlayRequest;
-
-        public enum GameRole
-        {
-            Hitter = 0,
-            Mole = 1,
-        }
     }
 }
