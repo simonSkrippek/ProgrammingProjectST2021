@@ -260,6 +260,7 @@ namespace WhackAStoodent.Runtime.Networking.Connectors
                 SendOutgoingMessage(message_to_send);
             }
         }
+
         private void SendOutgoingMessage(CustomMessageToSend messageToSend)
         {
             if (IsConnected(messageToSend.Recipient))

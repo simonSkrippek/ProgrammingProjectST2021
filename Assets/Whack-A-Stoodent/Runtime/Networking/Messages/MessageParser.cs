@@ -12,13 +12,12 @@ namespace WhackAStoodent.Runtime.Networking.Messages
         {
             switch (messageToParse.MessageType)
             {
+                case EMessageType.Error:
+                    if (TryParseErrorMessage(messageToParse, out messageBytes)) return true;
+                    break;
                 case EMessageType.Authenticate:
                     if (TryParseAuthenticateMessage(messageToParse, out messageBytes)) return true;
                     break;
-                case EMessageType.AcknowledgeAuthentication:
-                    throw new ArgumentException("should not need to parse a message with messageType 'AcknowledgeAuthentication' in this direction (message to byte)");
-                case EMessageType.DenyAuthentication:
-                    throw new ArgumentException("should not need to parse a message with messageType 'DenyAuthentication' in this direction (message to byte)");
                 case EMessageType.Ping:
                     if (TryParsePingMessage(messageToParse, out messageBytes)) return true;
                     break;
@@ -28,16 +27,12 @@ namespace WhackAStoodent.Runtime.Networking.Messages
                 case EMessageType.GetMatchHistory:
                     if (TryParseGetMatchHistoryMessage(messageToParse, out messageBytes)) return true;
                     break;
-                case EMessageType.MatchHistory:
-                    throw new ArgumentException("should not need to parse a message with messageType 'MatchHistory' in this direction (message to byte)");
                 case EMessageType.PlayWithRandom:
                     if (TryParsePlayWithRandomMessage(messageToParse, out messageBytes)) return true;
                     break;
                 case EMessageType.PlayWithSessionID:
                     if (TryParsePlayWithSessionIDMessage(messageToParse, out messageBytes)) return true;
                     break;
-                case EMessageType.PlayRequest:
-                    throw new ArgumentException("should not need to parse a message with messageType 'PlayRequest' in this direction (message to byte)");
                 case EMessageType.AcceptPlayRequest:
                     if (TryParseAcceptPlayRequestMessage(messageToParse, out messageBytes)) return true;
                     break;
@@ -47,8 +42,6 @@ namespace WhackAStoodent.Runtime.Networking.Messages
                 case EMessageType.LoadedGame:
                     if (TryParseLoadedGameMessage(messageToParse, out messageBytes)) return true;
                     break;
-                case EMessageType.GameEnded:
-                    throw new ArgumentException("should not need to parse a message with messageType 'GameEnded' in this direction (message to byte)");
                 case EMessageType.Hit:
                     if (TryParseHitMessage(messageToParse, out messageBytes)) return true;
                     break;
@@ -58,16 +51,28 @@ namespace WhackAStoodent.Runtime.Networking.Messages
                 case EMessageType.Hide:
                     if (TryParseHideMessage(messageToParse, out messageBytes)) return true;
                     break;
-                case EMessageType.HitSuccess:
-                    throw new ArgumentException("should not need to parse a message with messageType 'HitSuccess' in this direction (message to byte)");
-                case EMessageType.HitFail:
-                    throw new ArgumentException("should not need to parse a message with messageType 'HitFail' in this direction (message to byte)");
-                case EMessageType.MoleScored:
-                    throw new ArgumentException("should not need to parse a message with messageType 'MoleScored' in this direction (message to byte)");
+                case EMessageType.Debug:
+                    if (TryParseDebugMessage(messageToParse, out messageBytes)) return true;
+                    break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentException($"should not need to parse a message with messageType {messageToParse.MessageType} in this direction (message to byte)");
             }
             
+            messageBytes = null;
+            return false;
+        }
+        private static bool TryParseErrorMessage(AMessage messageToParse, out byte[] messageBytes)
+        {
+            if (messageToParse is ErrorMessage error_message_to_parse)
+            {
+                int required_number_of_bytes = 2 + GetDynamicallySizedStringEncodingLength(EDynamicStringSize.Int, error_message_to_parse._message);
+                messageBytes = new byte[required_number_of_bytes];
+                messageBytes[0] = (byte) EMessageType.Error;
+                messageBytes[1] = (byte) error_message_to_parse._type;
+
+                return TryParseDynamicallySizedString(messageBytes, error_message_to_parse._message, 2, out _, EDynamicStringSize.Int);
+            }
+
             messageBytes = null;
             return false;
         }
@@ -75,15 +80,13 @@ namespace WhackAStoodent.Runtime.Networking.Messages
         {
             if (messageToParse is AuthenticateMessage authenticate_message_to_parse)
             {
-                int required_number_of_bytes = 18 + authenticate_message_to_parse._userName.Length * 2;
+                int required_number_of_bytes = 17 + GetDynamicallySizedStringEncodingLength(EDynamicStringSize.Bit, authenticate_message_to_parse._userName);
                 messageBytes = new byte[required_number_of_bytes];
                 messageBytes[0] = (byte) EMessageType.Authenticate;
 
                 authenticate_message_to_parse._userID.ToByteArray().CopyTo(messageBytes, 1);
                 messageBytes[17] = (byte) authenticate_message_to_parse._userName.Length;
-                Encoding.Unicode.GetBytes(authenticate_message_to_parse._userName).CopyTo(messageBytes, 18);
-
-                return true;
+                return TryParseDynamicallySizedString(messageBytes, authenticate_message_to_parse._userName, 2, out _);
             }
 
             messageBytes = null;
@@ -167,11 +170,17 @@ namespace WhackAStoodent.Runtime.Networking.Messages
         }
         private static bool TryParseAcceptPlayRequestMessage(AMessage messageToParse, out byte[] messageBytes)
         {
-            if (messageToParse is AcceptPlayRequestMessage)
+            if (messageToParse is AcceptPlayRequestMessage accept_play_request_message)
             {
-                int required_number_of_bytes = 1;
+                int required_number_of_bytes = 1 + GetSessionCodeEncodingLength();
                 messageBytes = new byte[required_number_of_bytes];
                 messageBytes[0] = (byte) EMessageType.AcceptPlayRequest;
+
+                if (!TryParseSessionCode(messageBytes, accept_play_request_message._sessionCode, 1, out _))
+                {
+                    messageBytes = null;
+                    return false;
+                }
 
                 return true;
             }
@@ -183,11 +192,17 @@ namespace WhackAStoodent.Runtime.Networking.Messages
         {
             if (messageToParse is DenyPlayRequestMessage deny_play_request_message)
             {
-                int required_number_of_bytes = 2;
+                int required_number_of_bytes = 2 + GetSessionCodeEncodingLength();
                 messageBytes = new byte[required_number_of_bytes];
                 messageBytes[0] = (byte) EMessageType.DenyPlayRequest;
 
-                messageBytes[1] = (byte) deny_play_request_message._denialReason;
+                if (!TryParseSessionCode(messageBytes, deny_play_request_message._sessionCode, 1, out int new_byte_index))
+                {
+                    messageBytes = null;
+                    return false;
+                }
+                
+                messageBytes[new_byte_index] = (byte) deny_play_request_message._denialReason;
 
                 return true;
             }
@@ -256,6 +271,21 @@ namespace WhackAStoodent.Runtime.Networking.Messages
             messageBytes = null;
             return false;
         }
+        private static bool TryParseDebugMessage(AMessage messageToParse, out byte[] messageBytes)
+        {
+            if (messageToParse is DebugMessage debug_message_to_parse)
+            {
+                int required_number_of_bytes = 2 + GetDynamicallySizedStringEncodingLength(EDynamicStringSize.Int, debug_message_to_parse._message);
+                messageBytes = new byte[required_number_of_bytes];
+                messageBytes[0] = (byte) EMessageType.Debug;
+                messageBytes[1] = (byte) debug_message_to_parse._logLevel;
+
+                return TryParseDynamicallySizedString(messageBytes, debug_message_to_parse._message, 2, out _, EDynamicStringSize.Int);
+            }
+
+            messageBytes = null;
+            return false;
+        }
 
         public static bool ParseMessage(byte[] messageBytes, out AMessage parsedMessage)
         {
@@ -268,8 +298,9 @@ namespace WhackAStoodent.Runtime.Networking.Messages
             EMessageType message_type = (EMessageType) messageBytes[0];
             switch (message_type)
             {
-                case EMessageType.Authenticate:
-                    throw new ArgumentException("should not need to parse a message with messageType 'AcknowledgeAuthentication' in this direction (message to byte)");
+                case EMessageType.Error:
+                    if (TryParseErrorMessage(messageBytes, out parsedMessage)) return true;
+                    break;
                 case EMessageType.AcknowledgeAuthentication:
                     if (TryParseAcknowledgeAuthenticationMessage(messageBytes, out parsedMessage)) return true;
                     break;
@@ -282,30 +313,21 @@ namespace WhackAStoodent.Runtime.Networking.Messages
                 case EMessageType.Pong:
                     if (TryParsePongMessage(messageBytes, out parsedMessage)) return true;
                     break;
-                case EMessageType.GetMatchHistory:
-                    throw new ArgumentException("should not need to parse a message with messageType 'AcknowledgeAuthentication' in this direction (message to byte)");
                 case EMessageType.MatchHistory:
                     if (TryParseMatchHistoryMessage(messageBytes, out parsedMessage)) return true;
                     break;
-                case EMessageType.PlayWithRandom:
-                    throw new ArgumentException("should not need to parse a message with messageType 'AcknowledgeAuthentication' in this direction (message to byte)");
-                case EMessageType.PlayWithSessionID:
-                    throw new ArgumentException("should not need to parse a message with messageType 'AcknowledgeAuthentication' in this direction (message to byte)");
                 case EMessageType.PlayRequest:
                     if (TryParsePlayRequestMessage(messageBytes, out parsedMessage)) return true;
                     break;
-                case EMessageType.AcceptPlayRequest:
-                    throw new ArgumentException("should not need to parse a message with messageType 'AcknowledgeAuthentication' in this direction (message to byte)");
-                case EMessageType.DenyPlayRequest:
-                    throw new ArgumentException("should not need to parse a message with messageType 'AcknowledgeAuthentication' in this direction (message to byte)");
+                case EMessageType.StartedGame:
+                    if (TryParseStartedGameMessage(messageBytes, out parsedMessage)) return true;
+                    break;
                 case EMessageType.LoadedGame:
                     if (TryParseLoadedGameMessage(out parsedMessage)) return true;
                     break;
                 case EMessageType.GameEnded:
                     if (TryParseGameEndedMessage(messageBytes, out parsedMessage)) return true;
                     break;
-                case EMessageType.Hit:
-                    throw new ArgumentException("should not need to parse a message with messageType 'AcknowledgeAuthentication' in this direction (message to byte)");
                 case EMessageType.Look:
                     if (TryParseLookMessage(messageBytes, out parsedMessage)) return true;
                     break;
@@ -321,12 +343,34 @@ namespace WhackAStoodent.Runtime.Networking.Messages
                 case EMessageType.MoleScored:
                     if (TryParseMoleScoredMessage(messageBytes, out parsedMessage)) return true;
                     break;
+                case EMessageType.Debug:
+                    if (TryParseDebugMessage(messageBytes, out parsedMessage)) return true;
+                    break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentException($"should not need to parse a message with messageType {message_type} in this direction (byte to message)");
             }
 
             parsedMessage = null;
             return false;
+        }
+        private static bool TryParseErrorMessage(byte[] messageBytes, out AMessage parsedMessage)
+        {
+            if (messageBytes.Length < 2)
+            {
+                parsedMessage = null;
+                return false;
+            }
+            int current_byte_index = 1;
+            var error_type = (EErrorType) messageBytes[current_byte_index];
+            current_byte_index++;
+            if (!TryParseDynamicallySizedString(messageBytes, out string error_message, current_byte_index, out _))
+            {
+                parsedMessage = null;
+                return false;
+            }
+            
+            parsedMessage = new ErrorMessage(error_type, error_message);
+            return true;
         }
         private static bool TryParseAcknowledgeAuthenticationMessage(byte[] messageBytes, out AMessage parsedMessage)
         {
@@ -338,13 +382,11 @@ namespace WhackAStoodent.Runtime.Networking.Messages
             }
 
             var guid = new Guid(messageBytes.GetSubArray(1, 16));
-            var name_length = messageBytes[17];
-            if (messageBytes.Length < minimum_required_message_bytes + name_length * 2)
+            if (!TryParseDynamicallySizedString(messageBytes, out string name, 17, out _))
             {
                 parsedMessage = null;
                 return false;
             }
-            var name = Encoding.Unicode.GetString(messageBytes.GetSubArray(18, name_length * 2));
             
             parsedMessage = new AcknowledgeAuthenticationMessage(guid, name);
             return true;
@@ -426,21 +468,13 @@ namespace WhackAStoodent.Runtime.Networking.Messages
                 current_byte_index += 8;
                 
                 //player name parsing
-                if (current_byte_index + 1 > messageBytes.Length)
-                {
-                    break;
-                }
-                byte player_name_length = messageBytes[current_byte_index];
-                current_byte_index += 1;
-
-                int player_name_bytes = player_name_length * 2; 
                 
-                if (current_byte_index + player_name_bytes > messageBytes.Length)
+                if (!TryParseDynamicallySizedString(messageBytes, out string player_name, current_byte_index, out int new_byte_index))
                 {
                     break;
                 }
-                var player_name = Encoding.Unicode.GetString(messageBytes.GetSubArray(current_byte_index, player_name_bytes));
-                current_byte_index += player_name_bytes;
+                
+                current_byte_index = new_byte_index;
 
                 //opponent score parsing
                 if (current_byte_index + 8 > messageBytes.Length)
@@ -451,21 +485,12 @@ namespace WhackAStoodent.Runtime.Networking.Messages
                 current_byte_index += 8;
                 
                 //opponent name parsing
-                if (current_byte_index + 1 > messageBytes.Length)
+                if (!TryParseDynamicallySizedString(messageBytes, out string opponent_name, current_byte_index, out new_byte_index))
                 {
                     break;
                 }
-                byte opponent_name_length = messageBytes[current_byte_index];
-                current_byte_index += 1;
-
-                int opponent_name_bytes = opponent_name_length * 2; 
                 
-                if (current_byte_index + opponent_name_bytes > messageBytes.Length)
-                {
-                    break;
-                }
-                var opponent_name = Encoding.Unicode.GetString(messageBytes.GetSubArray(current_byte_index, opponent_name_bytes));
-                current_byte_index += opponent_name_bytes;
+                current_byte_index = new_byte_index;
 
                 match_data.Add(new MatchData(session_guid, player_name, player_score, opponent_name, opponent_score));
             }
@@ -492,28 +517,49 @@ namespace WhackAStoodent.Runtime.Networking.Messages
                 return false;
             }
             
-            PlayRequestMessage.GameRole player_game_role = (PlayRequestMessage.GameRole)messageBytes[1];
+            EGameRole player_game_role = (EGameRole)messageBytes[1];
             current_byte_index += 1;
+            
+            //session code parsing
+            if (!TryParseSessionCode(messageBytes, out string session_code, current_byte_index, out int new_byte_index))
+            {
+                parsedMessage = null;
+                return false;
+            }
+            current_byte_index = new_byte_index;
                 
             //player name parsing
+            if (!TryParseDynamicallySizedString(messageBytes, out string opponent_name, current_byte_index, out _))
+            {
+                parsedMessage = null;
+                return false;
+            }
+
+            parsedMessage = new PlayRequestMessage(player_game_role, opponent_name, session_code);
+            return true;
+        }
+        private static bool TryParseStartedGameMessage(byte[] messageBytes, out AMessage parsedMessage)
+        {
+            int current_byte_index = 1; 
+            
+            //player role index parsing
             if (current_byte_index + 1 > messageBytes.Length)
             {
                 parsedMessage = null;
                 return false;
             }
-            byte opponent_name_length = messageBytes[current_byte_index];
+            
+            EGameRole player_game_role = (EGameRole)messageBytes[1];
             current_byte_index += 1;
-
-            int opponent_name_bytes = opponent_name_length * 2; 
                 
-            if (current_byte_index + opponent_name_bytes > messageBytes.Length)
+            //player name parsing
+            if (!TryParseDynamicallySizedString(messageBytes, out string opponent_name, current_byte_index, out _))
             {
                 parsedMessage = null;
                 return false;
             }
-            var opponent_name = Encoding.Unicode.GetString(messageBytes.GetSubArray(current_byte_index, opponent_name_bytes));
-
-            parsedMessage = new PlayRequestMessage(player_game_role, opponent_name);
+            
+            parsedMessage = new StartedGameMessage(player_game_role, opponent_name);
             return true;
         }
         private static bool TryParseLoadedGameMessage(out AMessage parsedMessage)
@@ -591,6 +637,135 @@ namespace WhackAStoodent.Runtime.Networking.Messages
             
             parsedMessage = new MoleScoredMessage(points_gained);
             return true;
+        }
+        private static bool TryParseDebugMessage(byte[] messageBytes, out AMessage parsedMessage)
+        {
+            if (messageBytes.Length < 2)
+            {
+                parsedMessage = null;
+                return false;
+            }
+            int current_byte_index = 1;
+            var log_level = (ELogLevel) messageBytes[current_byte_index];
+            current_byte_index++;
+            if (!TryParseDynamicallySizedString(messageBytes, out string debug_message, current_byte_index, out _))
+            {
+                parsedMessage = null;
+                return false;
+            }
+            
+            parsedMessage = new DebugMessage(log_level, debug_message);
+            return true;
+        }
+
+        private static bool TryParseDynamicallySizedString(byte[] buffer, string dynamicString, int startIndex, out int newIndex, EDynamicStringSize sizeType = EDynamicStringSize.Bit)
+        {
+            if (startIndex + GetDynamicallySizedStringEncodingLength(sizeType, dynamicString) > buffer.Length)
+            {
+                newIndex = 0;
+                return false;
+            }
+
+            switch (sizeType)
+            {
+                case EDynamicStringSize.Bit:
+                    buffer[startIndex] = (byte) dynamicString.Length;
+                    startIndex += 1;
+                    break;
+                case EDynamicStringSize.Int:
+                    BitConverter.GetBytes(dynamicString.Length).CopyTo(buffer, startIndex);
+                    startIndex += 4;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(sizeType), sizeType, null);
+            }
+            
+            newIndex = startIndex + GetDynamicallySizedStringEncodingLength(sizeType, dynamicString);
+            Encoding.Unicode.GetBytes(dynamicString).CopyTo(buffer, startIndex);
+
+            return true;
+        }
+        private static bool TryParseDynamicallySizedString(byte[] buffer, out string dynamicString, int startIndex, out int newIndex, EDynamicStringSize sizeType = EDynamicStringSize.Bit)
+        {
+            if (startIndex + GetSizeEncodingLength(sizeType) > buffer.Length)
+            {
+                newIndex = 0;
+                dynamicString = null;
+                return false;
+            }
+            
+            int dynamic_string_length;
+            switch (sizeType)
+            {
+                case EDynamicStringSize.Bit:
+                    dynamic_string_length = buffer[startIndex] * 2;
+                    startIndex += 1;
+                    break;
+                case EDynamicStringSize.Int:
+                    dynamic_string_length = BitConverter.ToInt32(buffer, startIndex) * 2;
+                    startIndex += 4;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(sizeType), sizeType, null);
+            }
+            
+            if (startIndex + dynamic_string_length > buffer.Length)
+            {
+                newIndex = 0;
+                dynamicString = null;
+                return false;
+            }
+            
+            dynamicString = Encoding.Unicode.GetString(buffer, startIndex, dynamic_string_length);
+            newIndex = startIndex + dynamic_string_length;
+            return true;
+        }
+
+        private static bool TryParseSessionCode(byte[] buffer, string sessionCode, int startIndex, out int newIndex)
+        {
+            newIndex = startIndex + GetSessionCodeEncodingLength();
+            if (sessionCode == null || sessionCode.Length != GetSessionCodeStringLength() || buffer == null || buffer.Length < newIndex)
+            {
+                return false;
+            }
+            Encoding.UTF8.GetBytes(sessionCode).CopyTo(buffer, startIndex);
+            return true;
+        }
+        private static bool TryParseSessionCode(byte[] buffer, out string sessionCode, int startIndex, out int newIndex)
+        {
+            newIndex = startIndex + GetSessionCodeEncodingLength();
+            if (buffer == null || buffer.Length < newIndex)
+            {
+                sessionCode = null;
+                return false;
+            }
+
+            sessionCode = Encoding.UTF8.GetString(buffer, startIndex, GetSessionCodeEncodingLength());
+            return true;
+        }
+
+        private static int GetSessionCodeEncodingLength() => 6;
+        private static int GetSessionCodeStringLength() => 6;
+
+        private static int GetDynamicallySizedStringEncodingLength(EDynamicStringSize size, string dynamicString)
+        {
+            return GetSizeEncodingLength(size) + dynamicString.Length * 2;
+        }
+        private static int GetSizeEncodingLength(EDynamicStringSize size)
+        {
+            return
+                size switch
+                {
+                    EDynamicStringSize.Bit => 1,
+                    EDynamicStringSize.Int => 4,
+                    _ => throw new ArgumentOutOfRangeException(nameof(size), size, "unrecognized string size")
+                };
+        }
+
+        private enum EDynamicStringSize
+        {
+            Bit,
+            Int,
         }
     }
 }
