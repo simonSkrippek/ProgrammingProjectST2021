@@ -1,6 +1,5 @@
 ﻿using System;
 using JetBrains.Annotations;
-using UnityEditor;
 using UnityEngine;
 using WhackAStoodent.Runtime.Client.Networking.Messages;
 
@@ -70,26 +69,14 @@ namespace WhackAStoodent.Runtime.Client.Networking.Connectors
         protected bool GetConnectionSettings<TConnectionSettingsType>(out TConnectionSettingsType connectionSettings) where TConnectionSettingsType : AConnectionSettings
         {
             Debug.Log($"{this.GetType()}: Connector is requesting ConnectionSettings of type {nameof(TConnectionSettingsType)}");
-            var found_asset_guids = AssetDatabase.FindAssets($"t:{nameof(TConnectionSettingsType)}");
-            if (found_asset_guids == null || found_asset_guids.Length == 0)
+            connectionSettings = (TConnectionSettingsType) Resources.Load($"{nameof(TConnectionSettingsType)}", typeof(TConnectionSettingsType));
+            if (connectionSettings == null)
             {
+                Debug.Log("No connection settings asset found: needs to be located in Resources folder at path {nameof(TConnectionSettingsType)}");
                 connectionSettings = null;
                 return false;
             }
-            if (found_asset_guids.Length > 1)
-            {
-                Debug.Log($"Found more than one asset with matching type, will select the first one.");
-            }
-            var first_found_asset_guid = found_asset_guids[0];
-            var first_found_asset_path = AssetDatabase.GUIDToAssetPath(first_found_asset_guid);
-            if (string.IsNullOrEmpty(first_found_asset_path))
-            {
-                Debug.Log("Found Asset Path is invalid.");
-                connectionSettings = null;
-                return false;
-            }
-            connectionSettings = AssetDatabase.LoadAssetAtPath<TConnectionSettingsType>(first_found_asset_path);
-            return connectionSettings;
+            return true;
         }
     }
 }
