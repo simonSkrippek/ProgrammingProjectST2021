@@ -2,6 +2,7 @@
 
 namespace WhackAStoodent.Runtime.Client.Networking.Connectors
 {
+    [CreateAssetMenu(order = 1, fileName = "NetworkConnectionSettings", menuName = "ConnectionSettings/Network")]
     public class NetworkConnectionSettings : AConnectionSettings
     {
         [SerializeField, Tooltip("The IP address of the server to connect to")] public string ipAddress;

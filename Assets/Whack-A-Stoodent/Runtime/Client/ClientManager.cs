@@ -9,11 +9,14 @@ using WhackAStoodent.Runtime.Helper;
 namespace WhackAStoodent.Runtime.Client
 {
     [RequireComponent(typeof(ReceivedMessageLogger), typeof(SentMessageLogger))]
+    [RequireComponent(typeof(ClientDisconnectHandler))]
     public class ClientManager : APersistantSingletonManagerScript<ClientManager>
     {
         [SerializeField] private EConnectionType connectionType = default;
         private AConnector _connector;
 
+        public static event Action<ClientManager> OnClientManagerAvailable; 
+        
         public event Action ReadyForAuthentication;
         public event Action ConnectionInterrupted;
         public event Action<AMessage> MessageReceived;
@@ -40,6 +43,8 @@ namespace WhackAStoodent.Runtime.Client
             base.OnEnable();
             if (Instance == this)
             {
+                OnClientManagerAvailable?.Invoke(this);
+                
                 InitializeConnector();
                 if (!_connector.Connect())
                 {

@@ -129,5 +129,7 @@ namespace WhackAStoodent.Runtime
             }
             return progress_sum / _asyncSceneLoads.Count;
         }
+        
+        
     }
 }
