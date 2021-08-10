@@ -1,42 +1,85 @@
 ﻿using System;
-using WhackAStoodent.Runtime.Client;
-using WhackAStoodent.Runtime.Helper;
+using UnityEngine;
+using WhackAStoodent.Client;
+using WhackAStoodent.Helper;
 
-namespace WhackAStoodent.Runtime.GameState
+namespace WhackAStoodent.GameState
 {
-    public class GameStateManager : APersistantSingletonManagerScript<GameStateManager>
+    [RequireComponent(typeof(SceneManager))]
+    public class GameStateManager : ASingletonManagerScript<GameStateManager>
     {
         private ClientManager ClientManager => ClientManager.Instance;
         
         private EGameState _currentGameState = EGameState.PreConnect;
+
+        private SceneManager SceneManager => WhackAStoodent.SceneManager.Instance;
         
         private enum EGameState
         {
             PreConnect,
             Connecting,
+            //connected, but not authenticated -> no action, can only authenticate. back quits
             Unauthenticated,
             
-            MainMenu,
+            //connected, authenticated, doing menu stuff -> can request games or receive game requests. back bring up want to quit menu.
+            Authenticated,
+            //after sending a play request -> no action, can only wait for response. back does nothing?
             WaitingForAnswerToPlayRequest,
+            //after receiving a play request -> action required, accept or deny. back denies
             AnsweringPlayRequest,
-            InGame,
+            //when loading, before playing -> may only send finished loading message, until receiving one. back does nothing
+            LoadingPlaySession,
+            //while playing -> may send gameplay messages and receive them, until game end messages
+            InPlaySession,
+            //same as authenticated -> may send gameplay messages and receive them, until game end messages
             InResultsScreen,
         }
 
         //ConnectingState Data
         private EGameState? _stateBeforeConnecting = null;
 
-        private void SwitchGameState(EGameState gameState)
+        private void ChangeGameState(EGameState gameState)
         {
-            
+            if (gameState == EGameState.PreConnect)
+            {
+            }
+            else if (gameState == EGameState.Connecting)
+            {
+            }
+            else if (gameState == EGameState.Unauthenticated)
+            {
+            }
+            else if (gameState == EGameState.Authenticated)
+            {
+            }
+            else if (gameState == EGameState.WaitingForAnswerToPlayRequest)
+            {
+            }
+            else if (gameState == EGameState.AnsweringPlayRequest)
+            {
+                
+            }
+            else if (gameState == EGameState.LoadingPlaySession)
+            {
+            }
+            else if (gameState == EGameState.InPlaySession)
+            {
+            }
+            else if (gameState == EGameState.InResultsScreen)
+            {
+                
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException();
+            }
         }
 
+        /// <summary>
+        /// do sth when the confirm input is given, or the confirm button is pressed in whatever scene we are in
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         public void HandleConfirmInput()
-        {
-            
-        }
-
-        public void HandleReturnInput()
         {
             switch (_currentGameState)
             {
@@ -44,19 +87,78 @@ namespace WhackAStoodent.Runtime.GameState
                     break;
                 case EGameState.Connecting:
                     break;
-                case EGameState.MainMenu:
+                case EGameState.Unauthenticated:
+                    break;
+                case EGameState.Authenticated:
                     break;
                 case EGameState.WaitingForAnswerToPlayRequest:
                     break;
                 case EGameState.AnsweringPlayRequest:
+                    AcceptPlayRequest();
                     break;
-                case EGameState.InGame:
+                case EGameState.LoadingPlaySession:
+                    break;
+                case EGameState.InPlaySession:
                     break;
                 case EGameState.InResultsScreen:
+                    ChangeGameState(EGameState.Authenticated);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        /// <summary>
+        /// do sth when the return input is given, or the return button is pressed in whatever scene we are in
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public void HandleReturnInput()
+        {
+            switch (_currentGameState)
+            {
+                case EGameState.PreConnect:
+                    SceneManager.QuitApplication();
+                    break;
+                case EGameState.Connecting:
+                    SceneManager.QuitApplication();
+                    break;
+                case EGameState.Unauthenticated:
+                    SceneManager.QuitApplication();
+                    break;
+                case EGameState.Authenticated:
+                    //TODO trigger want to quit menu
+                    SceneManager.QuitApplication();
+                    break;
+                case EGameState.WaitingForAnswerToPlayRequest:
+                    //nothing? TODO should cancel play request
+                    break;
+                case EGameState.AnsweringPlayRequest:
+                    DeclinePlayRequest();
+                    break;
+                case EGameState.LoadingPlaySession:
+                    //nothing
+                    break;
+                case EGameState.InPlaySession:
+                    //nothing?
+                    break;
+                case EGameState.InResultsScreen:
+                    ChangeGameState(EGameState.Authenticated);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private void AcceptPlayRequest()
+        {
+            //Todo send message for accepting
+            
+        }
+        private void DeclinePlayRequest()
+        {
+            //Todo send message for declining
+            
+            ChangeGameState(EGameState.Authenticated);
         }
 
         private void Start()

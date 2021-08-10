@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
-using WhackAStoodent.Runtime.Client.Networking.Messages;
+using WhackAStoodent.Client.Networking.Messages;
 
-namespace WhackAStoodent.Runtime.Client.Logging
+namespace WhackAStoodent.Client.Logging
 {
     public class SentMessageLogger : MonoBehaviour
     {

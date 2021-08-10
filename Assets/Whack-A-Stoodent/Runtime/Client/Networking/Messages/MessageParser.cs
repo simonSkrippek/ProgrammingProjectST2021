@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
-using WhackAStoodent.Runtime.Helper;
+using WhackAStoodent.Helper;
 
-namespace WhackAStoodent.Runtime.Client.Networking.Messages
+namespace WhackAStoodent.Client.Networking.Messages
 {
     public static class MessageParser
     {

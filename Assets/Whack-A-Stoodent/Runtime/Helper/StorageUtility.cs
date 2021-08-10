@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using UnityEngine;
 
-namespace WhackAStoodent.Runtime
+namespace WhackAStoodent.Helper
 {
     public static class StorageUtility
     {

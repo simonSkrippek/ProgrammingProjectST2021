@@ -5,35 +5,22 @@ using JetBrains.Annotations;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using WhackAStoodent.Helper;
 
-namespace WhackAStoodent.Runtime
+namespace WhackAStoodent
 {
     [DefaultExecutionOrder(-5)]
-    public class SceneManager : MonoBehaviour
+    public class SceneManager : ASingletonManagerScript<SceneManager>
     {
-        private Dictionary<int, Scene> _loadedScenes = new Dictionary<int, Scene>();
-        private Dictionary<int, AsyncOperation> _asyncSceneLoads = new Dictionary<int, AsyncOperation>();
-        private Dictionary<int, AsyncOperation> _asyncSceneUnloads = new Dictionary<int, AsyncOperation>();
+        private readonly Dictionary<int, Scene> _loadedScenes = new Dictionary<int, Scene>();
+        private readonly Dictionary<int, AsyncOperation> _asyncSceneLoads = new Dictionary<int, AsyncOperation>();
+        private readonly Dictionary<int, AsyncOperation> _asyncSceneUnloads = new Dictionary<int, AsyncOperation>();
+        
         public bool IsAsyncLoading => _asyncSceneLoads.Count > 0;
-        private bool IsSceneLoadedOrLoading(int buildIndex) => _loadedScenes.ContainsKey(buildIndex) || _asyncSceneLoads.ContainsKey(buildIndex);
-        private bool IsSceneLoadedAndNotUnloading(int buildIndex) => _loadedScenes.ContainsKey(buildIndex) && !_asyncSceneUnloads.ContainsKey(buildIndex);
+        public bool IsSceneLoadedOrLoading(int buildIndex) => _loadedScenes.ContainsKey(buildIndex) || _asyncSceneLoads.ContainsKey(buildIndex);
+        public bool IsSceneLoadedAndNotUnloading(int buildIndex) => _loadedScenes.ContainsKey(buildIndex) && !_asyncSceneUnloads.ContainsKey(buildIndex);
 
-        private void Awake()
-        {
-            UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoadedHandler;
-            UnityEngine.SceneManagement.SceneManager.sceneUnloaded += OnSceneUnloadedHandler;
-        }
-
-        private void OnSceneLoadedHandler(Scene scene, LoadSceneMode loadSceneMode)
-        {
-            if (!_loadedScenes.ContainsKey(scene.buildIndex)) _loadedScenes.Add(scene.buildIndex, scene);
-            else _loadedScenes[scene.buildIndex] = scene;
-        }
-        private void OnSceneUnloadedHandler(Scene scene)
-        {
-            _loadedScenes.Remove(scene.buildIndex);
-        }
-
+        public bool TryGetLoadedScene(int buildIndex, out Scene scene) => _loadedScenes.TryGetValue(buildIndex, out scene);
         public int GetActiveSceneIndex()
         {
             return UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
@@ -69,24 +56,46 @@ namespace WhackAStoodent.Runtime
             if (sceneIndices == null) return CalculateCurrentAsyncLoadProgress();
             else return CalculateCurrentAsyncLoadProgress(sceneIndices);
         }
-        public void UnloadSceneAsync(int buildIndex, [NotNull] Action<AsyncOperation> onCompleteFunc)
+        public void UnloadSceneAsync(int buildIndex, Action<AsyncOperation> onCompleteFunc = null)
         {
             if (IsSceneLoadedAndNotUnloading(buildIndex))
             {
                 var unload_scene_async = CreateAsyncSceneUnload(buildIndex);
                 unload_scene_async.allowSceneActivation = true;
-                unload_scene_async.completed += onCompleteFunc;
+                if(onCompleteFunc != null) unload_scene_async.completed += onCompleteFunc;
             }
-        }
+        } 
         public void QuitApplication(int exitCode = 0)
         {
 #if UNITY_EDITOR
-            EditorApplication.isPlaying = false;
+            StopEditorPlaying();
 #else
             Application.Quit(exitCode);
 #endif
         }
 
+        private static void StopEditorPlaying()
+        {
+            EditorApplication.isPlaying = false;
+        }
+
+        protected override void Awake()
+        {
+            base.Awake();
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoadedHandler;
+            UnityEngine.SceneManagement.SceneManager.sceneUnloaded += OnSceneUnloadedHandler;
+        }
+
+        private void OnSceneLoadedHandler(Scene scene, LoadSceneMode loadSceneMode)
+        {
+            if (!_loadedScenes.ContainsKey(scene.buildIndex)) _loadedScenes.Add(scene.buildIndex, scene);
+            else _loadedScenes[scene.buildIndex] = scene;
+        }
+        private void OnSceneUnloadedHandler(Scene scene)
+        {
+            _loadedScenes.Remove(scene.buildIndex);
+        }
+        
         private AsyncOperation CreateAsyncSceneLoad(int buildIndex, LoadSceneMode loadSceneMode)
         {
             var async_scene_load = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(buildIndex, loadSceneMode);
@@ -97,8 +106,9 @@ namespace WhackAStoodent.Runtime
         private AsyncOperation CreateAsyncSceneUnload(int buildIndex)
         {
             var async_scene_unload = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(buildIndex);
+            async_scene_unload.allowSceneActivation = false;
             _asyncSceneUnloads.Add(buildIndex, async_scene_unload);
-            async_scene_unload.completed += (_) => { RemoveSceneUnload(buildIndex); };
+            async_scene_unload.completed += _ => { RemoveSceneUnload(buildIndex); };
             return async_scene_unload;
         }
 
@@ -129,7 +139,5 @@ namespace WhackAStoodent.Runtime
             }
             return progress_sum / _asyncSceneLoads.Count;
         }
-        
-        
     }
 }

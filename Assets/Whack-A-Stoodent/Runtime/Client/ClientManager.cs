@@ -1,16 +1,15 @@
 ﻿using System;
 using JetBrains.Annotations;
 using UnityEngine;
-using WhackAStoodent.Runtime.Client.Logging;
-using WhackAStoodent.Runtime.Client.Networking.Connectors;
-using WhackAStoodent.Runtime.Client.Networking.Messages;
-using WhackAStoodent.Runtime.Helper;
+using WhackAStoodent.Client.Logging;
+using WhackAStoodent.Client.Networking.Connectors;
+using WhackAStoodent.Client.Networking.Messages;
+using WhackAStoodent.Helper;
 
-namespace WhackAStoodent.Runtime.Client
+namespace WhackAStoodent.Client
 {
     [RequireComponent(typeof(ReceivedMessageLogger), typeof(SentMessageLogger))]
-    [RequireComponent(typeof(ClientDisconnectHandler))]
-    public class ClientManager : APersistantSingletonManagerScript<ClientManager>
+    public class ClientManager : ASingletonManagerScript<ClientManager>
     {
         [SerializeField] private EConnectionType connectionType = default;
         private AConnector _connector;
@@ -63,6 +62,7 @@ namespace WhackAStoodent.Runtime.Client
                 EConnectionType.Network => new NetworkConnector(),
                 _ => throw new ArgumentOutOfRangeException()
             };
+            
             _connector.ConnectedToServer += OnConnectedToServer;
             _connector.DisconnectedFromServer += OnDisconnectedFromServer;
             _connector.ServerConnectionTimedOut += OnServerConnectionTimedOut;

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace WhackAStoodent.Runtime.Helper
+namespace WhackAStoodent.Helper
 {
     public class DoNotDestroyOnLoad : MonoBehaviour
     {

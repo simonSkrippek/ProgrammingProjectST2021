@@ -1,6 +1,6 @@
 using ENet;
 
-namespace WhackAStoodent.Runtime.Client.Networking.ENet
+namespace WhackAStoodent.Client.Networking.ENet
 {
     internal static class EnetInitializer
     {

@@ -1,4 +1,4 @@
-﻿namespace WhackAStoodent.Runtime.GameState
+﻿namespace WhackAStoodent.GameState
 {
     public class PreConnectController
     {

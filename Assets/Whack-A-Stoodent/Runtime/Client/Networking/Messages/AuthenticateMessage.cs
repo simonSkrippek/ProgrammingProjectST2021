@@ -1,7 +1,7 @@
 ﻿using System;
 using JetBrains.Annotations;
 
-namespace WhackAStoodent.Runtime.Client.Networking.Messages
+namespace WhackAStoodent.Client.Networking.Messages
 {
     public class AuthenticateMessage : AMessage
     {

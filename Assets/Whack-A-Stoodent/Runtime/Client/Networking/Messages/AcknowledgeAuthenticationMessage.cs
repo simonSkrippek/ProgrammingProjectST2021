@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WhackAStoodent.Runtime.Client.Networking.Messages
+namespace WhackAStoodent.Client.Networking.Messages
 {
     public class AcknowledgeAuthenticationMessage : AMessage
     {

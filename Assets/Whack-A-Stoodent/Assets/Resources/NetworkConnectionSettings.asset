@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e833dbf1fa5440b0a86f6cad9c5267f6, type: 3}
   m_Name: NetworkConnectionSettings
   m_EditorClassIdentifier: 
-  ipAddress: 
-  port: 0
-  timeoutTime: 0
+  ipAddress: bigeti.de
+  port: 57007
+  timeoutTime: 15

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace WhackAStoodent.Runtime.Client.Networking.Connectors
+namespace WhackAStoodent.Client.Networking.Connectors
 {
     [CreateAssetMenu(order = 1, fileName = "NetworkConnectionSettings", menuName = "ConnectionSettings/Network")]
     public class NetworkConnectionSettings : AConnectionSettings

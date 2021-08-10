@@ -1,4 +1,4 @@
-﻿namespace WhackAStoodent.Runtime.Client.Networking.Messages
+﻿namespace WhackAStoodent.Client.Networking.Messages
 {
     public class ErrorMessage : AMessage
     {

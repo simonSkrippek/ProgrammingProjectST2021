@@ -1,8 +1,7 @@
-﻿using System;
-using UnityEngine;
-using WhackAStoodent.Runtime.Client;
+﻿using UnityEngine;
+using WhackAStoodent.Client;
 
-namespace WhackAStoodent.Runtime
+namespace WhackAStoodent
 {
     public class ClientDisconnectHandler : MonoBehaviour
     {

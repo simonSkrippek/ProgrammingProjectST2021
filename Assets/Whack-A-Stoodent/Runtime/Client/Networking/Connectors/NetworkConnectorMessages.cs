@@ -1,8 +1,8 @@
 ﻿using ENet;
 using JetBrains.Annotations;
-using WhackAStoodent.Runtime.Client.Networking.Messages;
+using WhackAStoodent.Client.Networking.Messages;
 
-namespace WhackAStoodent.Runtime.Client.Networking.Connectors
+namespace WhackAStoodent.Client.Networking.Connectors
 {
     internal enum EDisconnectionReason
     {

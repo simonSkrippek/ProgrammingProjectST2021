@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace WhackAStoodent.Runtime.Client.Networking.Messages
+namespace WhackAStoodent.Client.Networking.Messages
 {
     public class HitSuccessMessage : AMessage
     {

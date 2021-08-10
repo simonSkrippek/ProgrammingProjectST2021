@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WhackAStoodent.Runtime.Helper
+namespace WhackAStoodent.Helper
 {
     public static class ByteArrayExtension
     {

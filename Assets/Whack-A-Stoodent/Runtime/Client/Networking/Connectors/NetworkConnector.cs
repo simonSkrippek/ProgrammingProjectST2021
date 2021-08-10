@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using System.Threading;
 using ENet;
 using UnityEngine;
-using WhackAStoodent.Runtime.Client.Networking.ENet;
-using WhackAStoodent.Runtime.Client.Networking.Messages;
+using WhackAStoodent.Client.Networking.ENet;
+using WhackAStoodent.Client.Networking.Messages;
 using Event = ENet.Event;
 using EventType = ENet.EventType;
 
-namespace WhackAStoodent.Runtime.Client.Networking.Connectors
+namespace WhackAStoodent.Client.Networking.Connectors
 {
     public class NetworkConnector : AConnector
     {

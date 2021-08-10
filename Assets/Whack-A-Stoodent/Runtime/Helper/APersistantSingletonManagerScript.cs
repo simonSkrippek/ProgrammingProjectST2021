@@ -1,4 +1,4 @@
-﻿namespace WhackAStoodent.Runtime.Helper
+﻿namespace WhackAStoodent.Helper
 {
     public class APersistantSingletonManagerScript<T> : ASingletonManagerScript<T> where T : ASingletonManagerScript<T>
     {

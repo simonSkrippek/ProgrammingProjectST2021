@@ -1,9 +1,9 @@
 ﻿using System;
 using JetBrains.Annotations;
 using UnityEngine;
-using WhackAStoodent.Runtime.Client.Networking.Messages;
+using WhackAStoodent.Client.Networking.Messages;
 
-namespace WhackAStoodent.Runtime.Client.Networking.Connectors
+namespace WhackAStoodent.Client.Networking.Connectors
 {
     public abstract class AConnector
     {
