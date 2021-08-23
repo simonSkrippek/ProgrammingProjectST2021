@@ -9,6 +9,17 @@ using WhackAStoodent.Helper;
 
 namespace WhackAStoodent
 {
+    public enum Scenes
+    {
+        BootLoader = 0,
+        Networking = 1,
+    }
+
+    public static class ScenesEnumExtension
+    {
+        public static int Index(this Scenes scenes) => (int) scenes;
+    }
+    
     [DefaultExecutionOrder(-5)]
     public class SceneManager : ASingletonManagerScript<SceneManager>
     {

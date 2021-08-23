@@ -1,11 +1,11 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using WhackAStoodent.Client;
 using WhackAStoodent.Helper;
 
 namespace WhackAStoodent.GameState
 {
-    [RequireComponent(typeof(SceneManager))]
     public class GameStateManager : ASingletonManagerScript<GameStateManager>
     {
         private ClientManager ClientManager => ClientManager.Instance;
@@ -16,7 +16,9 @@ namespace WhackAStoodent.GameState
         
         private enum EGameState
         {
+            //not connected, game just started or was just reset. networking scene needs to be newly loaded
             PreConnect,
+            //not connected, game just started or was just reset. networking scene needs to be newly loaded
             Connecting,
             //connected, but not authenticated -> no action, can only authenticate. back quits
             Unauthenticated,
@@ -35,13 +37,18 @@ namespace WhackAStoodent.GameState
             InResultsScreen,
         }
 
-        //ConnectingState Data
-        private EGameState? _stateBeforeConnecting = null;
-
         private void ChangeGameState(EGameState gameState)
         {
             if (gameState == EGameState.PreConnect)
             {
+                if(SceneManager.IsSceneLoadedOrLoading(Scenes.Networking.Index()))
+                {
+                    ReloadNetworking();
+                }
+                else
+                {
+                    
+                }
             }
             else if (gameState == EGameState.Connecting)
             {
@@ -73,6 +80,18 @@ namespace WhackAStoodent.GameState
             {
                 throw new ArgumentOutOfRangeException();
             }
+        }
+
+        private void ReloadNetworking()
+        {
+            SceneManager.UnloadSceneAsync(Scenes.Networking.Index(), (_) =>
+            {
+                LoadNetworking();
+            });
+        }
+        private void LoadNetworking()
+        {
+            SceneManager.LoadSceneAsync(Scenes.Networking.Index(), LoadSceneMode.Additive);
         }
 
         /// <summary>

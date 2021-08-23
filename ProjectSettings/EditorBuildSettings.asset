@@ -4,7 +4,16 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Whack-A-Stoodent/Assets/Scenes/_BootLoader.unity
+    guid: a5bee62db896fcd49aabe6a7cf993659
+  - enabled: 1
+    path: Assets/Whack-A-Stoodent/Assets/Scenes/Networking.unity
+    guid: 042a035a41b324642bd1fdf438b384fb
+  - enabled: 1
+    path: Assets/Whack-A-Stoodent/Assets/Scenes/MainMenu.unity
+    guid: aa7ac9c371d5a31469e12c5762bea106
   m_configObjects:
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 4c378432b5da2e9428ae15b47683f934, type: 2}
     xr.sdk.mock-hmd.settings: {fileID: 11400000, guid: 0c6350813555c684dadb4c866b6d7321, type: 2}
