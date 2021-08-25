@@ -13,6 +13,7 @@ namespace WhackAStoodent
     {
         BootLoader = 0,
         Networking = 1,
+        UI = 2,
     }
 
     public static class ScenesEnumExtension
