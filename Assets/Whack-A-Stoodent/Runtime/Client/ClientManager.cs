@@ -22,7 +22,7 @@ namespace WhackAStoodent.Client
         public event Action<AMessage> RequestedSendingMessageToServer;
         public event Action<AMessage> SentMessageToServer;
         
-        public event Action<Guid, string> AuthenticationAcknowledged;
+        public event Action<string> AuthenticationAcknowledged;
         public event Action AuthenticationDenied; 
         public event Action<byte[]> ReceivedPingResponse; 
         public event Action<MatchData[]> ReceivedMatchHistory; 
@@ -47,6 +47,7 @@ namespace WhackAStoodent.Client
                 InitializeConnector();
                 if (!_connector.Connect())
                 {
+                    _connector.DisconnectedFromServer += OnDisconnectedFromServer;
                     Debug.Log("client host does not seem able to connect");
                 }
             }
@@ -116,7 +117,8 @@ namespace WhackAStoodent.Client
                 case EMessageType.AcknowledgeAuthentication:
                     if(message is AcknowledgeAuthenticationMessage acknowledge_authentication_message)
                     {
-                        AuthenticationAcknowledged?.Invoke(acknowledge_authentication_message._userID, acknowledge_authentication_message._userName);
+                        StorageUtility.UpdateClientGuid(acknowledge_authentication_message._userID);
+                        AuthenticationAcknowledged?.Invoke(acknowledge_authentication_message._userName);
                     }
                     break;
                 case EMessageType.DenyAuthentication:

@@ -69,10 +69,10 @@ namespace WhackAStoodent.Client.Networking.Connectors
         protected bool GetConnectionSettings<TConnectionSettingsType>(out TConnectionSettingsType connectionSettings) where TConnectionSettingsType : AConnectionSettings
         {
             Debug.Log($"{this.GetType()}: Connector is requesting ConnectionSettings of type {nameof(TConnectionSettingsType)}");
-            connectionSettings = (TConnectionSettingsType) Resources.Load($"{nameof(TConnectionSettingsType)}", typeof(TConnectionSettingsType));
+            connectionSettings = (TConnectionSettingsType) Resources.Load($"{typeof(TConnectionSettingsType).Name}", typeof(TConnectionSettingsType));
             if (connectionSettings == null)
             {
-                Debug.Log("No connection settings asset found: needs to be located in Resources folder at path {nameof(TConnectionSettingsType)}");
+                Debug.Log($"No connection settings asset found: needs to be located in Resources folder at path {(typeof(TConnectionSettingsType).Name)}");
                 connectionSettings = null;
                 return false;
             }

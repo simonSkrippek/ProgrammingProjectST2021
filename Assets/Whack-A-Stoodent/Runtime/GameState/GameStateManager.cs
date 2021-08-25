@@ -39,6 +39,7 @@ namespace WhackAStoodent.GameState
 
         private void ChangeGameState(EGameState gameState)
         {
+            Debug.Log($"Game State Changed: {gameState}");
             if (gameState == EGameState.PreConnect)
             {
                 if(SceneManager.IsSceneLoadedOrLoading(Scenes.Networking.Index()))
@@ -47,11 +48,12 @@ namespace WhackAStoodent.GameState
                 }
                 else
                 {
-                    
+                    LoadNetworking();
                 }
             }
             else if (gameState == EGameState.Connecting)
             {
+                
             }
             else if (gameState == EGameState.Unauthenticated)
             {
@@ -82,17 +84,6 @@ namespace WhackAStoodent.GameState
             }
         }
 
-        private void ReloadNetworking()
-        {
-            SceneManager.UnloadSceneAsync(Scenes.Networking.Index(), (_) =>
-            {
-                LoadNetworking();
-            });
-        }
-        private void LoadNetworking()
-        {
-            SceneManager.LoadSceneAsync(Scenes.Networking.Index(), LoadSceneMode.Additive);
-        }
 
         /// <summary>
         /// do sth when the confirm input is given, or the confirm button is pressed in whatever scene we are in
@@ -179,10 +170,30 @@ namespace WhackAStoodent.GameState
             
             ChangeGameState(EGameState.Authenticated);
         }
+        
+        public void ReloadNetworking()
+        {
+            SceneManager.UnloadSceneAsync(Scenes.Networking.Index(), (_) =>
+            {
+                LoadNetworking();
+            });
+        }
+        private void LoadNetworking()
+        {
+            SceneManager.LoadSceneAsync(
+                Scenes.Networking.Index(),
+                operation =>
+                {
+                    operation.allowSceneActivation = true;
+                    ChangeGameState(EGameState.Connecting);
+
+                },
+                LoadSceneMode.Additive);
+        }
 
         private void Start()
         {
-            
+            ChangeGameState(EGameState.PreConnect);
         }
     }
     

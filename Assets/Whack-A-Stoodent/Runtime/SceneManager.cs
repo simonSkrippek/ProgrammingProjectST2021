@@ -90,9 +90,8 @@ namespace WhackAStoodent
             EditorApplication.isPlaying = false;
         }
 
-        protected override void Awake()
+        protected void Awake()
         {
-            base.Awake();
             UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoadedHandler;
             UnityEngine.SceneManagement.SceneManager.sceneUnloaded += OnSceneUnloadedHandler;
         }
