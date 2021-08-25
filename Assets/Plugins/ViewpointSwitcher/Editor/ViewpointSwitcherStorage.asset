@@ -14,26 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   viewpointDict:
     m_keys:
-    - Assets/Scenes/Steve/Steve_GrassBattle.unity
-    - Assets/Whack-A-Stoodent/Assets/Scenes/_BootLoader.unity
-    - Assets/Whack-A-Stoodent/Assets/Scenes/Networking.unity
+    - Assets/Whack-A-Stoodent/Assets/Scenes/InGame.unity
     m_values:
     - data:
-      - pivot: {x: 962.13367, y: 599.62836, z: 301.83948}
+      - pivot: {x: 5.7731986, y: -2.5503647, z: -5.854474}
+        rotation: {x: 0.0074311453, y: 0.7064324, z: -0.007417819, w: 0.7077028}
+        size: 19.676048
+        name: side
+      - pivot: {x: 5.7731986, y: -2.5503647, z: -5.854474}
         rotation: {x: 0, y: 0, z: 0, w: 1}
-        size: 980.8095
-        name: canvas
-      - pivot: {x: 73.95992, y: -64.44861, z: 117.943634}
-        rotation: {x: 0.37740156, y: -0.006945325, z: 0.0028305855, w: 0.9260197}
-        size: 236.89499
-        name: terrain
-    - data:
-      - pivot: {x: 0, y: 0, z: 0}
-        rotation: {x: -0.08717229, y: 0.89959055, z: -0.21045254, w: -0.3726226}
-        size: 10
-        name: Origin
-    - data:
-      - pivot: {x: 0, y: 0, z: 0}
-        rotation: {x: -0.08717229, y: 0.89959055, z: -0.21045254, w: -0.3726226}
-        size: 10
-        name: Origin
+        size: 19.676048
+        name: front
