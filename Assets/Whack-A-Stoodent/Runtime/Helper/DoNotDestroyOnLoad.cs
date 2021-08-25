@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Electrodz.Runtime.Scripts
+namespace WhackAStoodent.Helper
 {
     public class DoNotDestroyOnLoad : MonoBehaviour
     {

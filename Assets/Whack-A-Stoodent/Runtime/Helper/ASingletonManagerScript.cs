@@ -1,5 +1,5 @@
 ﻿
-namespace WhackAStoodent.Runtime.Helper
+namespace WhackAStoodent.Helper
 {
     public abstract class ASingletonManagerScript<T> : AManagerScript<T> where T : AManagerScript<T>
     {

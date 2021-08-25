@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace WhackAStoodent.Runtime.Helper
+namespace WhackAStoodent.Helper
 {
     /// <summary>
     /// An abstract class that describes a manager script
