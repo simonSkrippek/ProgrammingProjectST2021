@@ -4,6 +4,7 @@ using UnityEngine;
 using WhackAStoodent.Client.Logging;
 using WhackAStoodent.Client.Networking.Connectors;
 using WhackAStoodent.Client.Networking.Messages;
+using WhackAStoodent.Events;
 using WhackAStoodent.Helper;
 
 namespace WhackAStoodent.Client
@@ -16,26 +17,27 @@ namespace WhackAStoodent.Client
 
         public static event Action<ClientManager> OnClientManagerAvailable; 
         
-        public event Action ReadyForAuthentication;
-        public event Action ConnectionInterrupted;
-        public event Action<AMessage> MessageReceived;
-        public event Action<AMessage> RequestedSendingMessageToServer;
-        public event Action<AMessage> SentMessageToServer;
+        [Header("Events")]
+        [SerializeField] private NoParameterEvent readyForAuthentication;
+        [SerializeField] private NoParameterEvent connectionInterrupted;
+        [SerializeField] private AMessageEvent messageReceived;
+        [SerializeField] private AMessageEvent requestedSendingMessageToServer;
+        [SerializeField] private AMessageEvent sentMessageToServer;
         
-        public event Action<string> AuthenticationAcknowledged;
-        public event Action AuthenticationDenied; 
-        public event Action<byte[]> ReceivedPingResponse; 
-        public event Action<MatchData[]> ReceivedMatchHistory; 
-        public event Action AllPlayersLoadedGame; 
-        public event Action<MatchData> GameEnded;
-        public event Action<EHoleIndex> MoleLooked;
-        public event Action MoleHid;
-        public event Action<string, EGameRole> ReceivedPlayRequest; 
-        public event Action<Vector2, EHoleIndex> HitterHitSuccessful; 
-        public event Action<long> HitterScored;
-        public event Action<Vector2> HitterHitFailed; 
-        public event Action<long> MoleScored;
-        public event Action<string, EGameRole> GameStarted;
+        [SerializeField] private StringEvent authenticationAcknowledged;
+        [SerializeField] private NoParameterEvent authenticationDenied; 
+        [SerializeField] private ByteArrayEvent receivedPingResponse; 
+        [SerializeField] private MatchDataArrayEvent receivedMatchHistory; 
+        [SerializeField] private NoParameterEvent allPlayersLoadedGame; 
+        [SerializeField] private StringGameRoleEvent receivedPlayRequest; 
+        [SerializeField] private StringGameRoleEvent gameStarted;
+        [SerializeField] private MatchDataEvent gameEnded;
+        [SerializeField] private HoleIndexEvent moleLooked;
+        [SerializeField] private NoParameterEvent moleHid;
+        [SerializeField] private LongEvent moleScored;
+        [SerializeField] private Vector2HoleIndexEvent hitterHitSuccessful; 
+        [SerializeField] private Vector2Event hitterHitFailed; 
+        [SerializeField] private LongEvent hitterScored;
 
         protected override void OnEnable()
         {
@@ -73,28 +75,28 @@ namespace WhackAStoodent.Client
         }
         private void OnConnectedToServer()
         {
-            ReadyForAuthentication?.Invoke();
+            readyForAuthentication.Invoke();
         }
         private void OnDisconnectedFromServer()
         {
-            ConnectionInterrupted?.Invoke();
+            connectionInterrupted.Invoke();
         }
         private void OnServerConnectionTimedOut()
         {
-            ConnectionInterrupted?.Invoke();
+            connectionInterrupted.Invoke();
         }
         private void OnReceivedMessageFromServer(AMessage message)
         {
-            MessageReceived?.Invoke(message);
+            messageReceived.Invoke(message);
             InvokeAppropriateMessageEvent(message);
         }
         private void OnRequestedSendingMessageToServer(AMessage message)
         {
-            RequestedSendingMessageToServer?.Invoke(message);
+            requestedSendingMessageToServer.Invoke(message);
         }
         private void OnSentMessageToServer(AMessage message)
         {
-            SentMessageToServer?.Invoke(message);
+            sentMessageToServer.Invoke(message);
         }
         private bool HandleApplicationQuit()
         {
@@ -118,13 +120,13 @@ namespace WhackAStoodent.Client
                     if(message is AcknowledgeAuthenticationMessage acknowledge_authentication_message)
                     {
                         StorageUtility.UpdateClientGuid(acknowledge_authentication_message._userID);
-                        AuthenticationAcknowledged?.Invoke(acknowledge_authentication_message._userName);
+                        authenticationAcknowledged.Invoke(acknowledge_authentication_message._userName);
                     }
                     break;
                 case EMessageType.DenyAuthentication:
                     if(message is DenyAuthenticationMessage)
                     {
-                        AuthenticationDenied?.Invoke();
+                        authenticationDenied.Invoke();
                     }
                     break;
                 case EMessageType.Ping:
@@ -136,68 +138,68 @@ namespace WhackAStoodent.Client
                 case EMessageType.Pong:
                     if(message is PongMessage pong_message)
                     {
-                        ReceivedPingResponse?.Invoke(pong_message._pingData);
+                        receivedPingResponse.Invoke(pong_message._pingData);
                     }
                     break;
                 case EMessageType.MatchHistory:
                     if(message is MatchHistoryMessage match_history_message)
                     {
-                        ReceivedMatchHistory?.Invoke(match_history_message._matchData);
+                        receivedMatchHistory.Invoke(match_history_message._matchData);
                     }
                     break;
                 case EMessageType.PlayRequest:
                     if(message is PlayRequestMessage play_request_message)
                     {
-                        ReceivedPlayRequest?.Invoke(play_request_message._opponentName, play_request_message._playerGameRole);
+                        receivedPlayRequest.Invoke(play_request_message._opponentName, play_request_message._playerGameRole);
                     }
                     break;
                 case EMessageType.StartedGame:
                     if(message is StartedGameMessage started_game_message)
                     {
-                        GameStarted?.Invoke(started_game_message._opponentName, started_game_message._playerGameRole);
+                        gameStarted.Invoke(started_game_message._opponentName, started_game_message._playerGameRole);
                     }
                     break;
                 case EMessageType.LoadedGame:
                     if(message is LoadedGameMessage)
                     {
-                        AllPlayersLoadedGame?.Invoke();
+                        allPlayersLoadedGame.Invoke();
                     }
                     break;
                 case EMessageType.GameEnded:
                     if(message is GameEndedMessage game_ended_message)
                     {
-                        GameEnded?.Invoke(game_ended_message._matchData);
+                        gameEnded.Invoke(game_ended_message._matchData);
                     }
                     break;
                 case EMessageType.Look:
                     if(message is LookMessage look_message)
                     {
-                        MoleLooked?.Invoke(look_message._holeIndex);
+                        moleLooked.Invoke(look_message._holeIndex);
                     }
                     break;
                 case EMessageType.Hide:
                     if(message is HideMessage)
                     {
-                        MoleHid?.Invoke();
+                        moleHid.Invoke();
                     }
                     break;
                 case EMessageType.HitSuccess:
                     if(message is HitSuccessMessage hit_success_message)
                     {
-                        HitterHitSuccessful?.Invoke(hit_success_message._hitPosition, hit_success_message._holeIndex);
-                        HitterScored?.Invoke(hit_success_message._pointsGained);
+                        hitterHitSuccessful.Invoke(hit_success_message._hitPosition, hit_success_message._holeIndex);
+                        hitterScored.Invoke(hit_success_message._pointsGained);
                     }
                     break;
                 case EMessageType.HitFail:
                     if(message is HitFailMessage hit_fail_message)
                     {
-                        HitterHitFailed?.Invoke(hit_fail_message._hitPosition);
+                        hitterHitFailed.Invoke(hit_fail_message._hitPosition);
                     }
                     break;
                 case EMessageType.MoleScored:
                     if(message is MoleScoredMessage mole_scored_message)
                     {
-                        MoleScored?.Invoke(mole_scored_message._pointsGained);
+                        moleScored.Invoke(mole_scored_message._pointsGained);
                     }
                     break;
                 default:

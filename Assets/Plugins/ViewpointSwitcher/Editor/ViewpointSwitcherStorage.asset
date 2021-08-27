@@ -13,15 +13,5 @@ MonoBehaviour:
   m_Name: ViewpointSwitcherStorage
   m_EditorClassIdentifier: 
   viewpointDict:
-    m_keys:
-    - Assets/Whack-A-Stoodent/Assets/Scenes/InGame.unity
-    m_values:
-    - data:
-      - pivot: {x: 5.7731986, y: -2.5503647, z: -5.854474}
-        rotation: {x: 0.0074311453, y: 0.7064324, z: -0.007417819, w: 0.7077028}
-        size: 19.676048
-        name: side
-      - pivot: {x: 5.7731986, y: -2.5503647, z: -5.854474}
-        rotation: {x: 0, y: 0, z: 0, w: 1}
-        size: 19.676048
-        name: front
+    m_keys: []
+    m_values: []
