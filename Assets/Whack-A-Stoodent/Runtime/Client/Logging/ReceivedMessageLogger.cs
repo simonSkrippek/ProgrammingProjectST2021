@@ -7,17 +7,19 @@ namespace WhackAStoodent.Client.Logging
     public class ReceivedMessageLogger : MonoBehaviour
     {
         [SerializeField] private NoParameterEvent readyForAuthenticationEvent;
+        [SerializeField] private AMessageEvent messageReceivedEvent;
+        [SerializeField] private NoParameterEvent connectionInterruptedEvent;
         private void Awake()
         {
             readyForAuthenticationEvent.Subscribe(OnReadyForAuthentication);
-            ClientManager.Instance.MessageReceived += OnMessageReceivedHandler;
-            ClientManager.Instance.ConnectionInterrupted += OnConnectionInterrupted;
+            messageReceivedEvent.Subscribe(OnMessageReceivedHandler);
+            connectionInterruptedEvent.Subscribe(OnConnectionInterrupted);
         }
         private void OnDestroy()
         {
             readyForAuthenticationEvent.Unsubscribe(OnReadyForAuthentication);
-            ClientManager.Instance.MessageReceived += OnMessageReceivedHandler;
-            ClientManager.Instance.ConnectionInterrupted += OnConnectionInterrupted;
+            messageReceivedEvent.Unsubscribe(OnMessageReceivedHandler);
+            connectionInterruptedEvent.Unsubscribe(OnConnectionInterrupted);
         }
         private void OnReadyForAuthentication()
         {

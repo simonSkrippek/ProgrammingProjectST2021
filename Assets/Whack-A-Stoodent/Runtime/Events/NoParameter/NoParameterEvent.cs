@@ -18,10 +18,20 @@ namespace WhackAStoodent.Events
         {
             _subscriptionList.Add(action);
         }
+        public static NoParameterEvent operator +(NoParameterEvent noParameterEvent, Action action)
+        {
+            noParameterEvent.Subscribe(action);
+            return noParameterEvent;
+        }
 
         public void Unsubscribe(Action action)
         {
             _subscriptionList.Remove(action);
+        }
+        public static NoParameterEvent operator -(NoParameterEvent noParameterEvent, Action action)
+        {
+            noParameterEvent.Unsubscribe(action);
+            return noParameterEvent;
         }
 
         public void Invoke()
