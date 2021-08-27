@@ -12,7 +12,7 @@ TagManager:
   - Water
   - UI
   - 
-  - 
+  - GameClickTargets
   - 
   - 
   - 
@@ -38,6 +38,21 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Background
+    uniqueID: 769329815
+    locked: 0
+  - name: UpperFaces
+    uniqueID: 1017524779
+    locked: 0
+  - name: UpperHoleMask
+    uniqueID: 1803080915
+    locked: 0
+  - name: LowerFaces
+    uniqueID: 265847265
+    locked: 0
+  - name: LowerHoleMask
+    uniqueID: 1459202017
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0

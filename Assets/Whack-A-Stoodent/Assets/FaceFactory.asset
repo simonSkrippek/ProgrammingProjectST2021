@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c46ce8e47cb4c659741db46796ca777, type: 3}
+  m_Name: FaceFactory
+  m_EditorClassIdentifier: 
+  facePrefab: {fileID: 5452486633527383034, guid: 19a131845a1df4f4c97aea0497941730, type: 3}
+  faceSprites:
+  - {fileID: 21300000, guid: 0b28a9bfd2904434daefb1b5a55ba1a5, type: 3}
+  - {fileID: 21300000, guid: e64ae3ab29209764e88b58fbe902ab67, type: 3}
+  - {fileID: 21300000, guid: b7965916e6a6be24da29848e482e03a1, type: 3}
+  faceSortingLayersByHoleIndex:
+  - UpperFaces
+  - UpperFaces
+  - LowerFaces
+  - LowerFaces

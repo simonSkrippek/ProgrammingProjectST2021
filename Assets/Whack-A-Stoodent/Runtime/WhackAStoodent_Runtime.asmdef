@@ -3,7 +3,8 @@
     "rootNamespace": "WhackAStoodent",
     "references": [
         "GUID:13a6fdc14ca9df84eb8019bc66fa9e5d",
-        "GUID:c6db286934fe09a4dbe805be9efc45ec"
+        "GUID:c6db286934fe09a4dbe805be9efc45ec",
+        "GUID:b820f711877c8104b923b6decd98dd43"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
