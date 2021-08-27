@@ -121,8 +121,7 @@ namespace ViewpointSwitcher.Editor
 
         private static bool CanAddCurrentCameraPosition(out CameraPosition cameraPosition)
         {
-            cameraPosition = GetSceneViewCameraPosition();
-            return !(string.IsNullOrWhiteSpace(_currentlyEnteredName) || (_availablePointOptions != null && _availablePointOptions.Contains(cameraPosition)));
+            return !(!GetSceneViewCameraPosition(out cameraPosition) || string.IsNullOrWhiteSpace(_currentlyEnteredName) || (_availablePointOptions != null && _availablePointOptions.Contains(cameraPosition)));
         }
         private static void AddCameraPosition(CameraPosition position)
         {
@@ -152,13 +151,22 @@ namespace ViewpointSwitcher.Editor
         private static void SetSceneViewCameraPosition(CameraPosition cameraPosition, bool direct = false)
         {
             var scene_view = SceneView.lastActiveSceneView;
+            if (scene_view == null) return;
+            
             if(direct) scene_view.LookAtDirect(cameraPosition.pivot, cameraPosition.rotation, cameraPosition.size);
             else scene_view.LookAt(cameraPosition.pivot, cameraPosition.rotation, cameraPosition.size);
         }
-        private static CameraPosition GetSceneViewCameraPosition()
+        private static bool GetSceneViewCameraPosition(out CameraPosition cameraPosition)
         {
             var scene_view = SceneView.lastActiveSceneView;
-            return new CameraPosition(_currentlyEnteredName, scene_view.pivot, scene_view.rotation, scene_view.size);
+            if (scene_view == null)
+            {
+                cameraPosition = default;
+                return false;
+            }
+
+            cameraPosition = new CameraPosition(_currentlyEnteredName, scene_view.pivot, scene_view.rotation, scene_view.size);
+            return scene_view != null;
         }
         private static bool GetCurrentlySelectedCameraPosition(out CameraPosition selectedCameraPosition)
         {
