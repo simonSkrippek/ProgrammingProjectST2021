@@ -17,6 +17,7 @@ namespace WhackAStoodent.Client
 
         public static event Action<ClientManager> OnClientManagerAvailable; 
         
+        [Header("Events")]
         [SerializeField] private NoParameterEvent readyForAuthentication;
         [SerializeField] private NoParameterEvent connectionInterrupted;
         [SerializeField] private AMessageEvent messageReceived;
@@ -28,15 +29,15 @@ namespace WhackAStoodent.Client
         [SerializeField] private ByteArrayEvent receivedPingResponse; 
         [SerializeField] private MatchDataArrayEvent receivedMatchHistory; 
         [SerializeField] private NoParameterEvent allPlayersLoadedGame; 
+        [SerializeField] private StringGameRoleEvent receivedPlayRequest; 
+        [SerializeField] private StringGameRoleEvent gameStarted;
         [SerializeField] private MatchDataEvent gameEnded;
         [SerializeField] private HoleIndexEvent moleLooked;
         [SerializeField] private NoParameterEvent moleHid;
-        [SerializeField] private StringGameRoleEvent receivedPlayRequest; 
-        [SerializeField] private Vector2HoleIndexEvent hitterHitSuccessful; 
-        [SerializeField] private LongEvent hitterScored;
-        [SerializeField] private Vector2Event hitterHitFailed; 
         [SerializeField] private LongEvent moleScored;
-        [SerializeField] private StringGameRoleEvent gameStarted;
+        [SerializeField] private Vector2HoleIndexEvent hitterHitSuccessful; 
+        [SerializeField] private Vector2Event hitterHitFailed; 
+        [SerializeField] private LongEvent hitterScored;
 
         protected override void OnEnable()
         {
