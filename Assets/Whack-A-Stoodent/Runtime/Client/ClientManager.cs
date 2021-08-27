@@ -4,6 +4,7 @@ using UnityEngine;
 using WhackAStoodent.Client.Logging;
 using WhackAStoodent.Client.Networking.Connectors;
 using WhackAStoodent.Client.Networking.Messages;
+using WhackAStoodent.Events;
 using WhackAStoodent.Helper;
 
 namespace WhackAStoodent.Client
@@ -16,7 +17,7 @@ namespace WhackAStoodent.Client
 
         public static event Action<ClientManager> OnClientManagerAvailable; 
         
-        public event Action ReadyForAuthentication;
+        public NoParameterEvent ReadyForAuthentication;
         public event Action ConnectionInterrupted;
         public event Action<AMessage> MessageReceived;
         public event Action<AMessage> RequestedSendingMessageToServer;
@@ -73,7 +74,7 @@ namespace WhackAStoodent.Client
         }
         private void OnConnectedToServer()
         {
-            ReadyForAuthentication?.Invoke();
+            ReadyForAuthentication.Invoke();
         }
         private void OnDisconnectedFromServer()
         {

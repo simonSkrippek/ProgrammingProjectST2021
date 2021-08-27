@@ -155,6 +155,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   connectionType: 0
+  ReadyForAuthentication: {fileID: 11400000, guid: 41767d81105debd4282be3d0107acbb1, type: 2}
 --- !u!114 &1911224967
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -179,6 +180,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8414c9b624540538f8759f64aa215bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  readyForAuthenticationEvent: {fileID: 11400000, guid: 41767d81105debd4282be3d0107acbb1, type: 2}
 --- !u!4 &1911224969
 Transform:
   m_ObjectHideFlags: 0

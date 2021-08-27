@@ -1,13 +1,21 @@
 ﻿using UnityEngine;
 using WhackAStoodent.Client.Networking.Messages;
+using WhackAStoodent.Events;
 
 namespace WhackAStoodent.Client.Logging
 {
     public class ReceivedMessageLogger : MonoBehaviour
     {
+        [SerializeField] private NoParameterEvent readyForAuthenticationEvent;
         private void Awake()
         {
-            ClientManager.Instance.ReadyForAuthentication += OnReadyForAuthentication;
+            readyForAuthenticationEvent.Subscribe(OnReadyForAuthentication);
+            ClientManager.Instance.MessageReceived += OnMessageReceivedHandler;
+            ClientManager.Instance.ConnectionInterrupted += OnConnectionInterrupted;
+        }
+        private void OnDestroy()
+        {
+            readyForAuthenticationEvent.Unsubscribe(OnReadyForAuthentication);
             ClientManager.Instance.MessageReceived += OnMessageReceivedHandler;
             ClientManager.Instance.ConnectionInterrupted += OnConnectionInterrupted;
         }
@@ -31,13 +39,6 @@ namespace WhackAStoodent.Client.Logging
             {
                 Debug.Log($"Connection of the client to the server has been interrupted");
             }
-        }
-
-        private void OnDestroy()
-        {
-            ClientManager.Instance.ReadyForAuthentication -= OnReadyForAuthentication;
-            ClientManager.Instance.MessageReceived -= OnMessageReceivedHandler;
-            ClientManager.Instance.ConnectionInterrupted -= OnConnectionInterrupted;
         }
     }
 }

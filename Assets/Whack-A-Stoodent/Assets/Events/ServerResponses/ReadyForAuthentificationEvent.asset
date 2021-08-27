@@ -9,9 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f7221ab13f24ee395079cb46279acf9, type: 3}
-  m_Name: ViewpointSwitcherStorage
+  m_Script: {fileID: 11500000, guid: 325be4df669449c09b8ae2f6739eeb22, type: 3}
+  m_Name: ReadyForAuthentificationEvent
   m_EditorClassIdentifier: 
-  viewpointDict:
-    m_keys: []
-    m_values: []
