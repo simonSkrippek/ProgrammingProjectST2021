@@ -15,17 +15,6 @@ namespace WhackAStoodent.InGame
         private void Awake()
         {
             _faceController = GetComponent<FaceController>();
-            var coroutine = spawnCoroutine();
-            StartCoroutine(coroutine);
-        }
-
-        private IEnumerator spawnCoroutine()
-        {
-            for (int i = 0; i < 10; i++)
-            {
-                _faceController.SpawnFace((EHoleIndex)Random.Range(0,4));
-                yield return new WaitForSeconds(.5f);
-            }
         }
         
         private void OnEnable()
