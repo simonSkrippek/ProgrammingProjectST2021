@@ -11,16 +11,17 @@ namespace WhackAStoodent.UI
     {
         public enum UIState
         {
-            Connecting = 0,
-            MainMenu = 1,
-            Loading = 2,
-            InGame = 3,
-            GameResultsUI = 4,
-            UserStatsUI = 5,
+            None = 0,
+            Connecting = 1,
+            MainMenu = 2,
+            Loading = 3,
+            InGame = 4,
+            GameResultsUI = 5,
+            UserStatsUI = 6,
         }
 
         [SerializeField] private UIStateUIScreenControllerDictionary uiDict;
-        private UIState _currentUIState;
+        private UIState _currentUIState = UIState.None;
 
         private void OnValidate()
         {

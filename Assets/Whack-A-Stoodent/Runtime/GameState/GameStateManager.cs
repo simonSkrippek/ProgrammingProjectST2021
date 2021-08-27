@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using WhackAStoodent.Client;
 using WhackAStoodent.Helper;
+using WhackAStoodent.UI;
 
 namespace WhackAStoodent.GameState
 {
@@ -53,7 +56,20 @@ namespace WhackAStoodent.GameState
             }
             else if (gameState == EGameState.Connecting)
             {
-                
+                if (!SceneManager.IsSceneLoadedOrLoading(Scenes.UI.Index()))
+                {
+                    SceneManager.LoadSceneAsync(Scenes.UI.Index(), 
+                        operation =>
+                        {
+                            operation.allowSceneActivation = true;
+                            UIManager.Instance.ActivateUIScreen(UIManager.UIState.Connecting);
+                        },
+                        LoadSceneMode.Additive);
+                }
+                else
+                {
+                    UIManager.Instance.ActivateUIScreen(UIManager.UIState.Connecting);
+                }
             }
             else if (gameState == EGameState.Unauthenticated)
             {
@@ -173,6 +189,8 @@ namespace WhackAStoodent.GameState
         
         public void ReloadNetworking()
         {
+            SceneManager.UnloadSceneAsync(Scenes.InGame.Index());
+            
             SceneManager.UnloadSceneAsync(Scenes.Networking.Index(), (_) =>
             {
                 LoadNetworking();

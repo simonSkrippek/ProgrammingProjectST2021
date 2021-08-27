@@ -14,6 +14,7 @@ namespace WhackAStoodent
         BootLoader = 0,
         Networking = 1,
         UI = 2,
+        InGame = 3,
     }
 
     public static class ScenesEnumExtension
