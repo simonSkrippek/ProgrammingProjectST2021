@@ -55,6 +55,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1134432789533666389}
   - component: {fileID: 3756919466355522909}
+  - component: {fileID: 3955040630097915001}
   m_Layer: 0
   m_Name: HammerSystemController
   m_TagString: Untagged
@@ -95,11 +96,27 @@ MonoBehaviour:
   hammerAppearance: {fileID: 8720437548883834650}
   hammerRenderer: {fileID: 6148706559606120943}
   screenMiddleMarker: {fileID: 6831328735799901390}
-  debugHitPosition: {fileID: 4156075170722675607}
+  prepAngle: 30
   restingAngle: -28
   hittingAngle: -90
+  prepDuration: 0
   hitDuration: 0.3
   recoveryDuration: 0.3
+--- !u!114 &3955040630097915001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1134432789533666388}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b245d801640241ddb9a6706becb72848, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hitSuccessfulEvent: {fileID: 11400000, guid: d3ffe1822b61ec34cb590484a8c7b0db, type: 2}
+  hitFailedEvent: {fileID: 11400000, guid: da030bf9b096efd4b9a412045b51a5a4, type: 2}
+  debugHitPosition: {fileID: 4156075170722675607}
 --- !u!1 &1183654518319311668
 GameObject:
   m_ObjectHideFlags: 0

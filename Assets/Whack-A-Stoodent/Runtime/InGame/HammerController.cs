@@ -9,10 +9,7 @@ namespace WhackAStoodent.InGame
         [Header("References")]
         [SerializeField] private Transform hammerRoot;
         [SerializeField] private Transform hammerAppearance;
-        [SerializeField] private SpriteRenderer hammerRenderer;
         [SerializeField] private Transform screenMiddleMarker;
-
-        [SerializeField] private Transform debugHitPosition;
         
         [Header("Settings")]
         [SerializeField] private float prepAngle;
@@ -42,17 +39,6 @@ namespace WhackAStoodent.InGame
                             .SetEase(Ease.InOutSine);
                     };
             };
-        }
-
-        [ContextMenu("Hit")]
-        private void HitDebugPosition()
-        {
-            Hit(debugHitPosition.position);
-        }
-        [ContextMenu("Hit", true)]
-        private bool CanHit()
-        {
-            return Application.isPlaying;
         }
     }
 }

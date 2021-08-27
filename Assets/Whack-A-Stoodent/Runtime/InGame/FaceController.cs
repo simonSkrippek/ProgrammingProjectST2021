@@ -15,7 +15,7 @@ namespace WhackAStoodent.InGame
         private GameObject _lastFace;
         private Tween _spawnTween;
 
-        private void DespawnFace()
+        public void DespawnFace()
         {
             if(!_lastFace) return;
             //tween lastFace out and destroy after 
@@ -27,7 +27,7 @@ namespace WhackAStoodent.InGame
                 .SetEase(Ease.InOutBack)
                 .onComplete += () => { Destroy(face_to_tween); };
         }
-        private void SpawnFace(EHoleIndex holeIndex)
+        public void SpawnFace(EHoleIndex holeIndex)
         {
             if(_lastFace) DespawnFace();
             
@@ -44,41 +44,6 @@ namespace WhackAStoodent.InGame
                 ret.y -= faceMovementDistance;
                 return ret;
             }
-        }
-        
-        
-        //test
-        [ContextMenu("SpawnFace_TopLeft")]
-        private void SpawnFace0()
-        {
-            SpawnFace(EHoleIndex.TopLeft);
-        }
-        [ContextMenu("SpawnFace_TopRight")]
-        private void SpawnFace1()
-        {
-            SpawnFace(EHoleIndex.TopRight);
-        }
-        [ContextMenu("SpawnFace_BottomRight")]
-        private void SpawnFace2()
-        {
-            SpawnFace(EHoleIndex.BottomRight);
-        }
-        [ContextMenu("SpawnFace_BottomLeft")]
-        private void SpawnFace3()
-        {
-            SpawnFace(EHoleIndex.BottomLeft);
-        }
-        [ContextMenu("DespawnFace")]
-        private void DespawnFaceMenu() => DespawnFace();
-        
-        [ContextMenu("SpawnFace_TopLeft", true)]
-        [ContextMenu("SpawnFace_TopRight", true)]
-        [ContextMenu("SpawnFace_BottomRight", true)]
-        [ContextMenu("SpawnFace_BottomLeft", true)]
-        [ContextMenu("DespawnFace", true)]
-        private bool CanSpawnFace()
-        {
-            return Application.isPlaying;
         }
     }
 }

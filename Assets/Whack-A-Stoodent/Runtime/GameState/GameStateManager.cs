@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using WhackAStoodent.Client;
@@ -173,6 +175,8 @@ namespace WhackAStoodent.GameState
         
         public void ReloadNetworking()
         {
+            SceneManager.UnloadSceneAsync(Scenes.InGame.Index());
+            
             SceneManager.UnloadSceneAsync(Scenes.Networking.Index(), (_) =>
             {
                 LoadNetworking();

@@ -100,8 +100,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1416650061436373636}
   - component: {fileID: 1416650061436373635}
+  - component: {fileID: 4166372787418375110}
   m_Layer: 0
-  m_Name: Faces
+  m_Name: FaceSystemController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -136,8 +137,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   faceFactory: {fileID: 11400000, guid: 44f975d15101a44438cd0225d07050cd, type: 2}
-  faceMovementDistance: 5
-  faceMovementDuration: 0.7
+  faceMovementDistance: 3.5
+  faceMovementDuration: 0.6
   faceParentsByHoleIndex:
   - {fileID: 1416650062222523841}
   - {fileID: 1416650062222523841}
@@ -148,6 +149,20 @@ MonoBehaviour:
   - {fileID: 1416650062817914872}
   - {fileID: 1416650061137585228}
   - {fileID: 1416650061050064717}
+--- !u!114 &4166372787418375110
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1416650061436373637}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c74ed4d3ab1420bb367041863dab573, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moleLooked: {fileID: 11400000, guid: a48a8285ce20aa34f9f11c5a73123021, type: 2}
+  moleHid: {fileID: 11400000, guid: 77d87ba51090d9c4f8daddfb4e5ca762, type: 2}
 --- !u!1 &1416650061471703376
 GameObject:
   m_ObjectHideFlags: 0
