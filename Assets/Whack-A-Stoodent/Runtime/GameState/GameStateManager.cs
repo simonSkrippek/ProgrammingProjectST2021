@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using WhackAStoodent.Client;
+using WhackAStoodent.Events;
 using WhackAStoodent.Helper;
 using WhackAStoodent.UI;
 
@@ -16,6 +17,24 @@ namespace WhackAStoodent.GameState
         private EGameState _currentGameState = EGameState.PreConnect;
 
         private SceneManager SceneManager => WhackAStoodent.SceneManager.Instance;
+        
+        [Header("Listened Events")]
+        [Header("User Input Events")]
+        [SerializeField] private StringEvent usernameInputEvent;
+        [SerializeField] private NoParameterEvent confirmInputEvent;
+        [SerializeField] private NoParameterEvent returnInputEvent;
+        [SerializeField] private HoleIndexEvent moleLookedInputEvent;
+        [SerializeField] private NoParameterEvent moleHidInputEvent;
+        [SerializeField] private Vector2Event hitterHitInputEvent;
+        
+        [Header("Server Response Events")]
+        [SerializeField] private NoParameterEvent readyForAuthenticationEvent;
+        [SerializeField] private StringEvent authenticationAcknowledgedEvent;
+        [SerializeField] private NoParameterEvent authenticationDeniedEvent; 
+        [SerializeField] private StringGameRoleEvent receivedPlayRequestEvent;
+        [SerializeField] private NoParameterEvent allPlayersLoadedGameEvent;
+        [SerializeField] private StringGameRoleEvent gameStartedEvent;
+        [SerializeField] private MatchDataEvent gameEndedEvent;
         
         private enum EGameState
         {
@@ -43,60 +62,43 @@ namespace WhackAStoodent.GameState
         private void ChangeGameState(EGameState gameState)
         {
             Debug.Log($"Game State Changed: {gameState}");
-            if (gameState == EGameState.PreConnect)
+            switch (gameState)
             {
-                if(SceneManager.IsSceneLoadedOrLoading(Scenes.Networking.Index()))
-                {
+                case EGameState.PreConnect when SceneManager.IsSceneLoadedOrLoading(Scenes.Networking.Index()):
                     ReloadNetworking();
-                }
-                else
-                {
+                    break;
+                case EGameState.PreConnect:
                     LoadNetworking();
-                }
-            }
-            else if (gameState == EGameState.Connecting)
-            {
-                if (!SceneManager.IsSceneLoadedOrLoading(Scenes.UI.Index()))
-                {
-                    SceneManager.LoadSceneAsync(Scenes.UI.Index(), 
-                        operation =>
-                        {
-                            operation.allowSceneActivation = true;
-                            UIManager.Instance.ActivateUIScreen(UIManager.UIState.Connecting);
-                        },
-                        LoadSceneMode.Additive);
-                }
-                else
-                {
-                    UIManager.Instance.ActivateUIScreen(UIManager.UIState.Connecting);
-                }
-            }
-            else if (gameState == EGameState.Unauthenticated)
-            {
-            }
-            else if (gameState == EGameState.Authenticated)
-            {
-            }
-            else if (gameState == EGameState.WaitingForAnswerToPlayRequest)
-            {
-            }
-            else if (gameState == EGameState.AnsweringPlayRequest)
-            {
-                
-            }
-            else if (gameState == EGameState.LoadingPlaySession)
-            {
-            }
-            else if (gameState == EGameState.InPlaySession)
-            {
-            }
-            else if (gameState == EGameState.InResultsScreen)
-            {
-                
-            }
-            else
-            {
-                throw new ArgumentOutOfRangeException();
+                    break;
+                case EGameState.Connecting:
+                    if(!SceneManager.IsSceneLoadedOrLoading(Scenes.UI.Index()))
+                        SceneManager.LoadSceneAsync(Scenes.UI.Index(),
+                            operation =>
+                            {
+                                operation.allowSceneActivation = true;
+                                UIManager.Instance.ActivateUIScreen(UIManager.UIState.Connecting);
+                            },
+                            LoadSceneMode.Additive);
+                    else
+                        UIManager.Instance.ActivateUIScreen(UIManager.UIState.Connecting);
+                    break;
+                case EGameState.Unauthenticated:
+                    UIManager.Instance.ActivateUIScreen(UIManager.UIState.UsernameInput);
+                    break;
+                case EGameState.Authenticated:
+                    break;
+                case EGameState.WaitingForAnswerToPlayRequest:
+                    break;
+                case EGameState.AnsweringPlayRequest:
+                    break;
+                case EGameState.LoadingPlaySession:
+                    break;
+                case EGameState.InPlaySession:
+                    break;
+                case EGameState.InResultsScreen:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 

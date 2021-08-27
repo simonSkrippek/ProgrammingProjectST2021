@@ -13,11 +13,12 @@ namespace WhackAStoodent.UI
         {
             None = 0,
             Connecting = 1,
-            MainMenu = 2,
-            Loading = 3,
-            InGame = 4,
-            GameResultsUI = 5,
-            UserStatsUI = 6,
+            UsernameInput = 2,
+            MainMenu = 3,
+            Loading = 4,
+            InGame = 5,
+            GameResultsUI = 6,
+            UserStatsUI = 7,
         }
 
         [SerializeField] private UIStateUIScreenControllerDictionary uiDict;

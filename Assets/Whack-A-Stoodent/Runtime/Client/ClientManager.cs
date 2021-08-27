@@ -28,8 +28,8 @@ namespace WhackAStoodent.Client
         [SerializeField] private NoParameterEvent authenticationDenied; 
         [SerializeField] private ByteArrayEvent receivedPingResponse; 
         [SerializeField] private MatchDataArrayEvent receivedMatchHistory; 
-        [SerializeField] private NoParameterEvent allPlayersLoadedGame; 
         [SerializeField] private StringGameRoleEvent receivedPlayRequest; 
+        [SerializeField] private NoParameterEvent allPlayersLoadedGame; 
         [SerializeField] private StringGameRoleEvent gameStarted;
         [SerializeField] private MatchDataEvent gameEnded;
         [SerializeField] private HoleIndexEvent moleLooked;
