@@ -120,6 +120,7 @@ namespace WhackAStoodent.Client
                     if(message is AcknowledgeAuthenticationMessage acknowledge_authentication_message)
                     {
                         StorageUtility.UpdateClientGuid(acknowledge_authentication_message._userID);
+                        StorageUtility.UpdateClientName(acknowledge_authentication_message._userName);
                         authenticationAcknowledged.Invoke(acknowledge_authentication_message._userName);
                     }
                     break;

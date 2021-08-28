@@ -137,8 +137,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   faceFactory: {fileID: 11400000, guid: 44f975d15101a44438cd0225d07050cd, type: 2}
-  faceMovementDistance: 3.5
-  faceMovementDuration: 0.6
+  faceMovementDistance: 6
+  faceMovementDuration: 0.75
   faceParentsByHoleIndex:
   - {fileID: 1416650062222523841}
   - {fileID: 1416650062222523841}

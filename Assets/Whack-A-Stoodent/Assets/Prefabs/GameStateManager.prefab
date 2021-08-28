@@ -43,3 +43,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e8c8ad3a6254cd0890d51f7140848b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  usernameInputEvent: {fileID: 11400000, guid: 45f68d1d1e1549d4c9baf1b56989ee42, type: 2}
+  confirmInputEvent: {fileID: 11400000, guid: 6f2044e6b26e0ea42ab7901de082602f, type: 2}
+  returnInputEvent: {fileID: 11400000, guid: 59e4973fa63452148be46a36c6aab27b, type: 2}
+  moleLookedInputEvent: {fileID: 11400000, guid: 0fe07b7323fa1394b9ba49a8c261148a, type: 2}
+  moleHidInputEvent: {fileID: 11400000, guid: aaf0c74b88bdf4b4f98c617d577fd2a0, type: 2}
+  hitterHitInputEvent: {fileID: 11400000, guid: 627065e187fa91e46a9651982c0113ea, type: 2}
+  readyForAuthenticationEvent: {fileID: 11400000, guid: 41767d81105debd4282be3d0107acbb1, type: 2}
+  authenticationAcknowledgedEvent: {fileID: 11400000, guid: 94fbe986d32ca334db3fae8e92a6db37, type: 2}
+  authenticationDeniedEvent: {fileID: 11400000, guid: b9a7c6acb2dac474886a165c21317e1c, type: 2}
+  receivedPlayRequestEvent: {fileID: 11400000, guid: e0a50667c0b492644a595ddfa6334876, type: 2}
+  allPlayersLoadedGameEvent: {fileID: 11400000, guid: 83eb3928471a12949b6064868292364a, type: 2}
+  gameStartedEvent: {fileID: 11400000, guid: 82da3d278930b2b49ac9eb544d96c1fd, type: 2}
+  gameEndedEvent: {fileID: 11400000, guid: d27f5f326e8fd834b9289e9100d8dc70, type: 2}
