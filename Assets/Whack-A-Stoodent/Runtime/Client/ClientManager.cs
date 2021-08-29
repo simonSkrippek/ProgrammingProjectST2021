@@ -235,13 +235,13 @@ namespace WhackAStoodent.Client
         {
             _connector.SendPlayWithSessionIDMessage(sessionCode);
         }
-        public void AcceptPlayRequest(string sessionCode)
+        public void AcceptPlayRequest()
         {
-            _connector.SendAcceptPlayRequestMessage(sessionCode);
+            _connector.SendAcceptPlayRequestMessage();
         }
-        public void DenyPlayRequest(string sessionCode, DenyPlayRequestMessage.EDenialReason? reason = null)
+        public void DenyPlayRequest(DenyPlayRequestMessage.EDenialReason? reason = null)
         {
-            _connector.SendDenyPlayRequestMessage(sessionCode, reason);
+            _connector.SendDenyPlayRequestMessage(reason);
         }
         public void ConfirmGameIsLoaded()
         {

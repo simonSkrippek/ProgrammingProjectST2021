@@ -8,6 +8,7 @@ namespace WhackAStoodent.Client.Networking.Messages
 {
     public static class MessageParser
     {
+        // PARSING FROM MESSAGE OBJECTS TO BYTE ARRAY; CLIENT TO SERVER MESSAGES
         public static bool ParseMessage(AMessage messageToParse, out byte[] messageBytes)
         {
             switch (messageToParse.MessageType)
@@ -172,15 +173,8 @@ namespace WhackAStoodent.Client.Networking.Messages
         {
             if (messageToParse is AcceptPlayRequestMessage accept_play_request_message)
             {
-                int required_number_of_bytes = 1 + GetSessionCodeEncodingLength();
-                messageBytes = new byte[required_number_of_bytes];
+                messageBytes = new byte[1];
                 messageBytes[0] = (byte) EMessageType.AcceptPlayRequest;
-
-                if (!TryParseSessionCode(messageBytes, accept_play_request_message._sessionCode, 1, out _))
-                {
-                    messageBytes = null;
-                    return false;
-                }
 
                 return true;
             }
@@ -192,17 +186,9 @@ namespace WhackAStoodent.Client.Networking.Messages
         {
             if (messageToParse is DenyPlayRequestMessage deny_play_request_message)
             {
-                int required_number_of_bytes = 2 + GetSessionCodeEncodingLength();
-                messageBytes = new byte[required_number_of_bytes];
+                messageBytes = new byte[2];
                 messageBytes[0] = (byte) EMessageType.DenyPlayRequest;
-
-                if (!TryParseSessionCode(messageBytes, deny_play_request_message._sessionCode, 1, out int new_byte_index))
-                {
-                    messageBytes = null;
-                    return false;
-                }
-                
-                messageBytes[new_byte_index] = (byte) deny_play_request_message._denialReason;
+                messageBytes[1] = (byte) deny_play_request_message._denialReason;
 
                 return true;
             }
@@ -287,6 +273,7 @@ namespace WhackAStoodent.Client.Networking.Messages
             return false;
         }
 
+        // PARSING FROM BYTE ARRAY TO MESSAGE OBJECT; SERVER TO CLIENT MESSAGES
         public static bool ParseMessage(byte[] messageBytes, out AMessage parsedMessage)
         {
             if (messageBytes == null || messageBytes.Length == 0)
@@ -318,6 +305,9 @@ namespace WhackAStoodent.Client.Networking.Messages
                     break;
                 case EMessageType.PlayRequest:
                     if (TryParsePlayRequestMessage(messageBytes, out parsedMessage)) return true;
+                    break;
+                case EMessageType.DenyPlayRequest:
+                    if (TryParseDenyPlayRequestMessage(messageBytes, out parsedMessage)) return true;
                     break;
                 case EMessageType.StartedGame:
                     if (TryParseStartedGameMessage(messageBytes, out parsedMessage)) return true;
@@ -382,13 +372,15 @@ namespace WhackAStoodent.Client.Networking.Messages
             }
 
             var guid = new Guid(messageBytes.GetSubArray(1, 16));
-            if (!TryParseDynamicallySizedString(messageBytes, out string name, 17, out _))
+            //parse 6 byte long session code to string
+            if (!TryParseSessionCode(messageBytes, out string session_code, 17, out int name_start_index) || 
+                !TryParseDynamicallySizedString(messageBytes, out string name, name_start_index, out _))
             {
                 parsedMessage = null;
                 return false;
             }
             
-            parsedMessage = new AcknowledgeAuthenticationMessage(guid, name);
+            parsedMessage = new AcknowledgeAuthenticationMessage(guid, name, session_code);
             return true;
         }
         private static bool TryParseDenyAuthenticationMessage(out AMessage parsedMessage)
@@ -467,6 +459,14 @@ namespace WhackAStoodent.Client.Networking.Messages
                 long player_score = BitConverter.ToInt64(messageBytes, current_byte_index);
                 current_byte_index += 8;
                 
+                //player role parsing
+                if (current_byte_index + 1 > messageBytes.Length)
+                {
+                    break;
+                }
+                EGameRole player_game_role = (EGameRole) messageBytes[current_byte_index];
+                current_byte_index += 1;
+                
                 //player name parsing
                 
                 if (!TryParseDynamicallySizedString(messageBytes, out string player_name, current_byte_index, out int new_byte_index))
@@ -484,6 +484,14 @@ namespace WhackAStoodent.Client.Networking.Messages
                 long opponent_score = BitConverter.ToInt64(messageBytes, current_byte_index);
                 current_byte_index += 8;
                 
+                //opponent role parsing
+                if (current_byte_index + 1 > messageBytes.Length)
+                {
+                    break;
+                }
+                EGameRole opponent_game_role = (EGameRole) messageBytes[current_byte_index];
+                current_byte_index += 1;
+                
                 //opponent name parsing
                 if (!TryParseDynamicallySizedString(messageBytes, out string opponent_name, current_byte_index, out new_byte_index))
                 {
@@ -492,7 +500,7 @@ namespace WhackAStoodent.Client.Networking.Messages
                 
                 current_byte_index = new_byte_index;
 
-                match_data.Add(new MatchData(session_guid, player_name, player_score, opponent_name, opponent_score));
+                match_data.Add(new MatchData(session_guid, player_name, player_game_role, player_score, opponent_name, opponent_game_role, opponent_score));
             }
 
             if (current_byte_index == messageBytes.Length)
@@ -536,6 +544,17 @@ namespace WhackAStoodent.Client.Networking.Messages
             }
 
             parsedMessage = new PlayRequestMessage(player_game_role, opponent_name, session_code);
+            return true;
+        }
+        private static bool TryParseDenyPlayRequestMessage(byte[] messageBytes, out AMessage parsedMessage)
+        {
+            if (messageBytes.Length < 2)
+            {
+                parsedMessage = null;
+                return false;
+            }
+
+            parsedMessage = new DenyPlayRequestMessage((DenyPlayRequestMessage.EDenialReason) messageBytes[1]);
             return true;
         }
         private static bool TryParseStartedGameMessage(byte[] messageBytes, out AMessage parsedMessage)
