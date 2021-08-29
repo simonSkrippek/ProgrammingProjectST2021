@@ -4,7 +4,7 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
-namespace SerializableDictionary.Editor
+namespace SerializableDictionary.Editor.Plugins.ViewpointSwitcher.SerializableDictionary.Editor
 {
 	public class SerializableDictionaryPropertyDrawer : PropertyDrawer
 	{

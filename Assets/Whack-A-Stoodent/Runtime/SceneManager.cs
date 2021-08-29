@@ -13,7 +13,7 @@ namespace WhackAStoodent
     {
         BootLoader = 0,
         Networking = 1,
-        MainMenu = 2,
+        UI = 2,
         InGame = 3,
     }
 

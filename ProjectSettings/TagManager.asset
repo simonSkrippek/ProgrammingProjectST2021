@@ -44,6 +44,9 @@ TagManager:
   - name: UpperFaces
     uniqueID: 1017524779
     locked: 0
+  - name: LowerHoleBackground
+    uniqueID: 1488847591
+    locked: 0
   - name: UpperHoleMask
     uniqueID: 1803080915
     locked: 0

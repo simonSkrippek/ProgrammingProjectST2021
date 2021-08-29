@@ -18,7 +18,7 @@ namespace WhackAStoodent.InGame
             }
             else
             {
-                if (Input.GetKeyDown(KeyCode.Mouse0))
+                if (UnityEngine.Input.GetKeyDown(KeyCode.Mouse0))
                 {
                     ProcessClick();
                 }
@@ -27,7 +27,7 @@ namespace WhackAStoodent.InGame
 
         private void ProcessClick()
         {
-            Vector3 position = Input.mousePosition;
+            Vector3 position = UnityEngine.Input.mousePosition;
             Vector2 hit_position = inGameCamera.ScreenToWorldPoint(position, Camera.MonoOrStereoscopicEye.Mono);
             hitterHit?.Invoke(hit_position);
         }

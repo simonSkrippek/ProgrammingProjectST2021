@@ -3,7 +3,9 @@
     "rootNamespace": "WhackAStoodent",
     "references": [
         "GUID:13a6fdc14ca9df84eb8019bc66fa9e5d",
-        "GUID:b820f711877c8104b923b6decd98dd43"
+        "GUID:c6db286934fe09a4dbe805be9efc45ec",
+        "GUID:b820f711877c8104b923b6decd98dd43",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

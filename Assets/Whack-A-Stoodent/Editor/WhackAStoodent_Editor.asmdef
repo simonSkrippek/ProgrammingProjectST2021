@@ -1,0 +1,17 @@
+{
+    "name": "WhackAStoodent_Editor",
+    "rootNamespace": "WhackAStoodent.Editor",
+    "references": [
+        "GUID:be7a31eb9a57c87428f8b62a8f86152e",
+        "GUID:9e9cfa5333eb9114bb673dd489622c4a"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

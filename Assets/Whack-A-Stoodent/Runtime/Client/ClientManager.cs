@@ -28,8 +28,8 @@ namespace WhackAStoodent.Client
         [SerializeField] private NoParameterEvent authenticationDenied; 
         [SerializeField] private ByteArrayEvent receivedPingResponse; 
         [SerializeField] private MatchDataArrayEvent receivedMatchHistory; 
-        [SerializeField] private NoParameterEvent allPlayersLoadedGame; 
         [SerializeField] private StringGameRoleEvent receivedPlayRequest; 
+        [SerializeField] private NoParameterEvent allPlayersLoadedGame; 
         [SerializeField] private StringGameRoleEvent gameStarted;
         [SerializeField] private MatchDataEvent gameEnded;
         [SerializeField] private HoleIndexEvent moleLooked;
@@ -120,6 +120,7 @@ namespace WhackAStoodent.Client
                     if(message is AcknowledgeAuthenticationMessage acknowledge_authentication_message)
                     {
                         StorageUtility.UpdateClientGuid(acknowledge_authentication_message._userID);
+                        StorageUtility.UpdateClientName(acknowledge_authentication_message._userName);
                         authenticationAcknowledged.Invoke(acknowledge_authentication_message._userName);
                     }
                     break;
