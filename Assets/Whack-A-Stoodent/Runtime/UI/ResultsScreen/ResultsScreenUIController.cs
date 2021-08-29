@@ -22,9 +22,7 @@ namespace WhackAStoodent.UI.ResultsScreen
 
         private void HandleGameEnded(MatchData matchData)
         {
-            //TODO fix once gamerRoles are part of the matchData object
-            var opponent_game_role = EGameRole.Hitter;
-            if (opponent_game_role == EGameRole.Hitter)
+            if (matchData._opponentGameRole == EGameRole.Hitter)
             {
                 hitterUsernameText.text = matchData._opponentName;
                 hitterScoreText.text = matchData._opponentScore.ToString();

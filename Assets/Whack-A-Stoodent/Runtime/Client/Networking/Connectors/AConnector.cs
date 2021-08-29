@@ -47,10 +47,10 @@ namespace WhackAStoodent.Client.Networking.Connectors
         public virtual void SendPlayWithSessionIDMessage(string sessionID) => SendPlayWithSessionIDMessage(new PlayWithSessionIDMessage(sessionID));
         public virtual void SendPlayWithSessionIDMessage(PlayWithSessionIDMessage message) => SendMessage(message);
         
-        public virtual void SendAcceptPlayRequestMessage(string sessionCode) => SendAcceptPlayRequestMessage(new AcceptPlayRequestMessage(sessionCode));
+        public virtual void SendAcceptPlayRequestMessage() => SendAcceptPlayRequestMessage(new AcceptPlayRequestMessage());
         public virtual void SendAcceptPlayRequestMessage(AcceptPlayRequestMessage message) => SendMessage(message);
         
-        public virtual void SendDenyPlayRequestMessage(string sessionCode, DenyPlayRequestMessage.EDenialReason? denialReason) => SendDenyPlayRequestMessage(new DenyPlayRequestMessage(sessionCode, denialReason ?? DenyPlayRequestMessage.EDenialReason.PlayerChoice));
+        public virtual void SendDenyPlayRequestMessage(DenyPlayRequestMessage.EDenialReason? denialReason) => SendDenyPlayRequestMessage(new DenyPlayRequestMessage(denialReason ?? DenyPlayRequestMessage.EDenialReason.PlayerChoice));
         public virtual void SendDenyPlayRequestMessage(DenyPlayRequestMessage message) => SendMessage(message);
         
         public virtual void SendLoadedGameMessage() => SendLoadedGameMessage(new LoadedGameMessage());
