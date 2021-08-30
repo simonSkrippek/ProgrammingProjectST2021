@@ -81,15 +81,10 @@ namespace WhackAStoodent
         public void QuitApplication(int exitCode = 0)
         {
 #if UNITY_EDITOR
-            StopEditorPlaying();
+            EditorApplication.isPlaying = false;
 #else
             Application.Quit(exitCode);
 #endif
-        }
-
-        private static void StopEditorPlaying()
-        {
-            EditorApplication.isPlaying = false;
         }
 
         protected void Awake()
