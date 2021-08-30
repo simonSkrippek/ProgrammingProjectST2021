@@ -441,10 +441,7 @@ namespace WhackAStoodent.GameState
                     break;
                 case EGameState.Connecting:
                     LoadUISceneIfNotAlreadyLoaded(
-                        () =>
-                    {
-                        UIManager.Instance.ActivateUIScreen(UIManager.UIState.Connecting);
-                    });
+                        () => UIManager.Instance.ActivateUIScreen(UIManager.UIState.Connecting));
                     break;
                 case EGameState.Unauthenticated:
                     UIManager.Instance.ActivateUIScreen(UIManager.UIState.UsernameInput);
