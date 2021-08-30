@@ -40,8 +40,8 @@ namespace WhackAStoodent.UI.InGame
                 mole_username = opponentUserName;
             }
 
-            moleUsernameText.text = mole_username;
-            hitterUsernameText.text = hitter_username;
+            moleUsernameText.text = mole_username.ToUpper();
+            hitterUsernameText.text = hitter_username.ToUpper();
         }
 
         private void HandleMoleScored(long newScore)

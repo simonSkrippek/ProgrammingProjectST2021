@@ -9,6 +9,7 @@ namespace WhackAStoodent.InGame
     {
         [SerializeField] private HoleIndexEvent moleLooked;
         [SerializeField] private NoParameterEvent moleHid;
+        [SerializeField] private Vector2HoleIndexEvent hitterHitSuccessful;
         
         private FaceController _faceController;
 
@@ -21,11 +22,13 @@ namespace WhackAStoodent.InGame
         {
             moleLooked.Subscribe(HandleMoleLooked);
             moleHid.Subscribe(HandleMoleHid);
+            hitterHitSuccessful.Subscribe(HandleHitterHitSuccessful);
         }
         private void OnDisable()
         {
             moleLooked.Unsubscribe(HandleMoleLooked);
             moleHid.Unsubscribe(HandleMoleHid);
+            hitterHitSuccessful.Unsubscribe(HandleHitterHitSuccessful);
         }
 
         private void HandleMoleLooked(EHoleIndex holeIndex)
@@ -35,6 +38,10 @@ namespace WhackAStoodent.InGame
         private void HandleMoleHid()
         {
             _faceController.DespawnFace();
+        }
+        private void HandleHitterHitSuccessful(Vector2 position, EHoleIndex holeIndex)
+        {
+            HandleMoleHid();
         }
         
         [ContextMenu("SpawnFace_TopLeft")]

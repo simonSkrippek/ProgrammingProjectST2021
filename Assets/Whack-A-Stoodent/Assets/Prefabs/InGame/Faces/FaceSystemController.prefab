@@ -163,6 +163,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moleLooked: {fileID: 11400000, guid: a48a8285ce20aa34f9f11c5a73123021, type: 2}
   moleHid: {fileID: 11400000, guid: 77d87ba51090d9c4f8daddfb4e5ca762, type: 2}
+  hitterHitSuccessful: {fileID: 11400000, guid: d3ffe1822b61ec34cb590484a8c7b0db, type: 2}
 --- !u!1 &1416650061471703376
 GameObject:
   m_ObjectHideFlags: 0

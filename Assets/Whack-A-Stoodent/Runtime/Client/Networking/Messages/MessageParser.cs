@@ -86,8 +86,7 @@ namespace WhackAStoodent.Client.Networking.Messages
                 messageBytes[0] = (byte) EMessageType.Authenticate;
 
                 authenticate_message_to_parse._userID.ToByteArray().CopyTo(messageBytes, 1);
-                messageBytes[17] = (byte) authenticate_message_to_parse._userName.Length;
-                return TryParseDynamicallySizedString(messageBytes, authenticate_message_to_parse._userName, 2, out _);
+                return TryParseDynamicallySizedString(messageBytes, authenticate_message_to_parse._userName, 17, out _);
             }
 
             messageBytes = null;
@@ -365,7 +364,7 @@ namespace WhackAStoodent.Client.Networking.Messages
         }
         private static bool TryParseAcknowledgeAuthenticationMessage(byte[] messageBytes, out AMessage parsedMessage)
         {
-            int minimum_required_message_bytes = 18;
+            int minimum_required_message_bytes = 24;
             if (messageBytes.Length < minimum_required_message_bytes)
             {
                 parsedMessage = null;
