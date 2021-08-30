@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
@@ -16,16 +17,16 @@ namespace WhackAStoodent.UI
             Loading = 2,
             UsernameInput = 3,
             MainMenu = 4,
-            RespondToPlayRequest = 5,
             CreatePlayRequest = 5,
-            WaitForPlayRequestResponse = 5,
+            WaitForPlayRequestResponse = 6,
+            RespondToPlayRequest = 7,
             InGame = 14,
             GameResults = 15,
             UserStatsUI = 20,
         }
 
         [SerializeField] private UIStateUIScreenControllerDictionary uiDict;
-        private UIState _currentUIState = UIState.None;
+        private UIState _currentBaseUIState = UIState.None;
 
         private void OnValidate()
         {
@@ -37,28 +38,44 @@ namespace WhackAStoodent.UI
                     uiDict.Add(value, null);
             }
         }
-
+        
         public void ActivateUIScreen(UIState state, bool displayAdditively = false)
         {
             //TODO handle additive ui
-            if(state == _currentUIState) return;
+            if(state == _currentBaseUIState) return;
             
-            foreach (var pair in uiDict)
+            if(displayAdditively == false)
             {
-                if (pair.Key != state)
+                foreach (var pair in uiDict)
                 {
-                    pair.Value.Deactivate();
+                    if (pair.Key != state)
+                    {
+                        pair.Value.Deactivate();
+                    }
+                    else
+                    {
+                        pair.Value.Activate();
+                    }
                 }
-                else
-                {
-                    pair.Value.Activate();
-                }
+                _currentBaseUIState = state;
+            }
+            else if(uiDict.TryGetValue(state, out UIScreenController controller_to_activate))
+            {
+                controller_to_activate.Activate();
             }
         }
         
         public void DeactivateUIScreen(UIState state)
         {
             //TODO
+            if (state == _currentBaseUIState)
+            {
+                ActivateUIScreen(UIState.None);
+            }
+            else if(uiDict.TryGetValue(state, out UIScreenController controller_to_deactivate))
+            {
+                controller_to_deactivate.Deactivate();
+            }
         }
     }
 }

@@ -10,5 +10,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 325be4df669449c09b8ae2f6739eeb22, type: 3}
-  m_Name: PlayButtonInputEvent
+  m_Name: QuitInputEvent
   m_EditorClassIdentifier: 

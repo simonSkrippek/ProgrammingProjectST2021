@@ -46,6 +46,15 @@ MonoBehaviour:
   usernameInputEvent: {fileID: 11400000, guid: 45f68d1d1e1549d4c9baf1b56989ee42, type: 2}
   confirmInputEvent: {fileID: 11400000, guid: 6f2044e6b26e0ea42ab7901de082602f, type: 2}
   returnInputEvent: {fileID: 11400000, guid: 59e4973fa63452148be46a36c6aab27b, type: 2}
+  mainMenuStartCreatePlayRequestInputEvent: {fileID: 11400000, guid: dedf26b3526da914fa839c6a18992623, type: 2}
+  mainMenuAbortCreatePlayRequestInputEvent: {fileID: 11400000, guid: 494f012e8efc2ba4397fee18b9fd6041, type: 2}
+  requestPlayWithRandomInputEvent: {fileID: 11400000, guid: 5a4a7ecd1b626694585c7bad50ed9f03, type: 2}
+  requestPlayWithSessionCodeInputEvent: {fileID: 11400000, guid: 14d8e1fa80bce2a46841422d31ab8415, type: 2}
+  resultsScreenPlayAgainInputEvent: {fileID: 11400000, guid: 1b013aa59ea9c4e4cafc2ab812ed1726, type: 2}
+  resultsScreenReturnInputEvent: {fileID: 11400000, guid: 29ac869c8701a0c48841a85d3349bef0, type: 2}
+  acceptPlayRequestInputEvent: {fileID: 11400000, guid: 3139e9ce763fb0e438038fa9294ce1fa, type: 2}
+  declinePlayRequestInputEvent: {fileID: 11400000, guid: c426d17fe8b3277419f11726224d3e49, type: 2}
+  quitInputEvent: {fileID: 11400000, guid: 8c5fe5572c97ebc489b8eb07dab56336, type: 2}
   moleLookedInputEvent: {fileID: 11400000, guid: 0fe07b7323fa1394b9ba49a8c261148a, type: 2}
   moleHidInputEvent: {fileID: 11400000, guid: aaf0c74b88bdf4b4f98c617d577fd2a0, type: 2}
   hitterHitInputEvent: {fileID: 11400000, guid: 627065e187fa91e46a9651982c0113ea, type: 2}
@@ -53,6 +62,7 @@ MonoBehaviour:
   authenticationAcknowledgedEvent: {fileID: 11400000, guid: 94fbe986d32ca334db3fae8e92a6db37, type: 2}
   authenticationDeniedEvent: {fileID: 11400000, guid: b9a7c6acb2dac474886a165c21317e1c, type: 2}
   receivedPlayRequestEvent: {fileID: 11400000, guid: e0a50667c0b492644a595ddfa6334876, type: 2}
+  receivedDenyPlayRequestEvent: {fileID: 11400000, guid: 2971972f750179c4ca034951b12f8335, type: 2}
   allPlayersLoadedGameEvent: {fileID: 11400000, guid: 83eb3928471a12949b6064868292364a, type: 2}
   gameStartedEvent: {fileID: 11400000, guid: 82da3d278930b2b49ac9eb544d96c1fd, type: 2}
   gameEndedEvent: {fileID: 11400000, guid: d27f5f326e8fd834b9289e9100d8dc70, type: 2}

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -20,13 +18,15 @@ namespace WhackAStoodent.GameState
 
         private SceneManager SceneManager => WhackAStoodent.SceneManager.Instance;
         
-        [Header("Listened Events")]
         [Header("User Input Events")]
+        [Header("Listened Events")]
         [SerializeField] private StringEvent usernameInputEvent;
         [SerializeField] private NoParameterEvent confirmInputEvent;
         [SerializeField] private NoParameterEvent returnInputEvent;
-        [SerializeField] private NoParameterEvent mainMenuCreatePlayRequestInputEvent;
+        [SerializeField] private NoParameterEvent mainMenuStartCreatePlayRequestInputEvent;
         [SerializeField] private NoParameterEvent mainMenuAbortCreatePlayRequestInputEvent;
+        [SerializeField] private NoParameterEvent requestPlayWithRandomInputEvent;
+        [SerializeField] private StringEvent requestPlayWithSessionCodeInputEvent;
         [SerializeField] private NoParameterEvent resultsScreenPlayAgainInputEvent;
         [SerializeField] private NoParameterEvent resultsScreenReturnInputEvent;
         [SerializeField] private NoParameterEvent acceptPlayRequestInputEvent;
@@ -41,7 +41,7 @@ namespace WhackAStoodent.GameState
         [SerializeField] private NoParameterEvent readyForAuthenticationEvent;
         [SerializeField] private StringEvent authenticationAcknowledgedEvent;
         [SerializeField] private NoParameterEvent authenticationDeniedEvent; 
-        [SerializeField] private StringGameRoleEvent receivedPlayRequestEvent;
+        [SerializeField] private StringEvent receivedPlayRequestEvent;
         [SerializeField] private DenialReasonEvent receivedDenyPlayRequestEvent;
         [SerializeField] private NoParameterEvent allPlayersLoadedGameEvent;
         [SerializeField] private StringGameRoleEvent gameStartedEvent;
@@ -72,37 +72,49 @@ namespace WhackAStoodent.GameState
             confirmInputEvent.Subscribe(HandleConfirmInput);
             returnInputEvent.Subscribe(HandleReturnInput);
             usernameInputEvent.Subscribe(HandleUsernameInput);
-            mainMenuCreatePlayRequestInputEvent.Subscribe(HandleCreatePlayRequestInput);
+            mainMenuStartCreatePlayRequestInputEvent.Subscribe(HandleCreatePlayRequestInput);
             mainMenuAbortCreatePlayRequestInputEvent.Subscribe(HandleAbortCreatePlayRequestInput);
+            requestPlayWithRandomInputEvent.Subscribe(HandleRequestPlayWithRandomInput);
+            requestPlayWithSessionCodeInputEvent.Subscribe(HandleRequestPlayWithSessionCodeInput);
             resultsScreenPlayAgainInputEvent.Subscribe(HandlePlayAgainInput);
             resultsScreenReturnInputEvent.Subscribe(HandleReturnToMainMenuInput);
             acceptPlayRequestInputEvent.Subscribe(HandleAcceptPlayRequestInput);
             declinePlayRequestInputEvent.Subscribe(HandleDeclinePlayRequestInput);
             quitInputEvent.Subscribe(HandleQuitInput);
         }
+        protected override void OnDisable()
+        {
+            base.OnDisable();
+            
+            readyForAuthenticationEvent.Unsubscribe(HandleReadyForAuthentication);
+            authenticationAcknowledgedEvent.Unsubscribe(HandleAuthenticationAcknowledged);
+            authenticationDeniedEvent.Unsubscribe(HandleAuthenticationDenied);
+            receivedPlayRequestEvent.Unsubscribe(HandleReceivedPlayRequest);
+            receivedDenyPlayRequestEvent.Unsubscribe(HandleReceivedDenyPlayRequest);
+            gameStartedEvent.Unsubscribe(HandleGameStarted);
+            allPlayersLoadedGameEvent.Unsubscribe(HandleAllPlayersLoadedGame);
+            gameEndedEvent.Unsubscribe(HandleGameEnded);
+            
+            moleLookedInputEvent.Unsubscribe(HandleMoleLookedInput);
+            moleHidInputEvent.Unsubscribe(HandleMoleHidInput);
+            hitterHitInputEvent.Unsubscribe(HandleHitterHitInput);
 
-        private void HandlePlayAgainInput()
-        {
-            if (_currentGameState == EGameState.InResultsScreen)
-            {
-                ChangeGameState(EGameState.WaitingForAnswerToPlayRequest);
-            }
-            else
-            {
-                Debug.LogWarning($"Should not be receiving PlayAgainInput in game state {_currentGameState}");
-            }
+            confirmInputEvent.Unsubscribe(HandleConfirmInput);
+            returnInputEvent.Unsubscribe(HandleReturnInput);
+            usernameInputEvent.Unsubscribe(HandleUsernameInput);
+            mainMenuStartCreatePlayRequestInputEvent.Unsubscribe(HandleCreatePlayRequestInput);
+            mainMenuAbortCreatePlayRequestInputEvent.Unsubscribe(HandleAbortCreatePlayRequestInput);
+            requestPlayWithRandomInputEvent.Unsubscribe(HandleRequestPlayWithRandomInput);
+            requestPlayWithSessionCodeInputEvent.Unsubscribe(HandleRequestPlayWithSessionCodeInput);
+            resultsScreenPlayAgainInputEvent.Unsubscribe(HandlePlayAgainInput);
+            resultsScreenReturnInputEvent.Unsubscribe(HandleReturnToMainMenuInput);
+            acceptPlayRequestInputEvent.Unsubscribe(HandleAcceptPlayRequestInput);
+            declinePlayRequestInputEvent.Unsubscribe(HandleDeclinePlayRequestInput);
+            quitInputEvent.Unsubscribe(HandleQuitInput);
         }
-        private void HandleReturnToMainMenuInput()
-        {
-            if (_currentGameState == EGameState.InResultsScreen)
-            {
-                ChangeGameState(EGameState.Authenticated);
-            }
-            else
-            {
-                Debug.LogWarning($"Should not be receiving ReturnToMainMenuInput in game state {_currentGameState}");
-            }
-        }
+
+
+        
 
         //================== Server Message Handling ===============
         private void HandleReadyForAuthentication()
@@ -141,7 +153,7 @@ namespace WhackAStoodent.GameState
                 
             }
         }
-        private void HandleReceivedPlayRequest(string opponentUsername, EGameRole playerGameRole)
+        private void HandleReceivedPlayRequest(string opponentUsername)
         {
             if (_currentGameState == EGameState.Authenticated)
             {
@@ -191,11 +203,6 @@ namespace WhackAStoodent.GameState
         }
 
         //================== User Input Handling ===============
-        
-        /// <summary>
-        /// do sth when the confirm input is given, or the confirm button is pressed in whatever scene we are in
-        /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
         public void HandleConfirmInput()
         {
             switch (_currentGameState)
@@ -224,10 +231,6 @@ namespace WhackAStoodent.GameState
                     throw new ArgumentOutOfRangeException();
             }
         }
-        /// <summary>
-        /// do sth when the return input is given, or the return button is pressed in whatever scene we are in
-        /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
         public void HandleReturnInput()
         {
             switch (_currentGameState)
@@ -263,7 +266,8 @@ namespace WhackAStoodent.GameState
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-        }private void HandleUsernameInput(string username)
+        }
+        private void HandleUsernameInput(string username)
         {
             if (_currentGameState == EGameState.Unauthenticated)
             {
@@ -296,6 +300,52 @@ namespace WhackAStoodent.GameState
             {
                 Debug.LogWarning($"Should not be receiving AbortCreatePlayRequestInput in game state {_currentGameState}");  
                 
+            }
+        }
+        private void HandleRequestPlayWithRandomInput()
+        {
+            if (_currentGameState == EGameState.Authenticated)
+            {
+                ChangeGameState(EGameState.WaitingForAnswerToPlayRequest);
+                ClientManager.RequestPlayWithRandom();
+            }
+            else
+            {
+                Debug.LogWarning($"Should not be receiving RequestPlayWithRandomInput in game state {_currentGameState}");
+            }
+        }
+        private void HandleRequestPlayWithSessionCodeInput(string opponentSessionCode)
+        {
+            if (_currentGameState == EGameState.Authenticated)
+            {
+                ChangeGameState(EGameState.WaitingForAnswerToPlayRequest);
+                ClientManager.RequestPlayWithSessionCode(opponentSessionCode);
+            }
+            else
+            {
+                Debug.LogWarning($"Should not be receiving RequestPlayWithSessionCodeInput in game state {_currentGameState}");
+            }
+        }
+        private void HandlePlayAgainInput()
+        {
+            if (_currentGameState == EGameState.InResultsScreen)
+            {
+                ChangeGameState(EGameState.WaitingForAnswerToPlayRequest);
+            }
+            else
+            {
+                Debug.LogWarning($"Should not be receiving PlayAgainInput in game state {_currentGameState}");
+            }
+        }
+        private void HandleReturnToMainMenuInput()
+        {
+            if (_currentGameState == EGameState.InResultsScreen)
+            {
+                ChangeGameState(EGameState.Authenticated);
+            }
+            else
+            {
+                Debug.LogWarning($"Should not be receiving ReturnToMainMenuInput in game state {_currentGameState}");
             }
         }
         private void HandleAcceptPlayRequestInput()
@@ -339,6 +389,7 @@ namespace WhackAStoodent.GameState
             }
         }
         
+        //================== InGame User Input Handling ===============
         private void HandleMoleLookedInput(EHoleIndex holeIndex)
         {
             if (_currentGameState == EGameState.InPlaySession)
