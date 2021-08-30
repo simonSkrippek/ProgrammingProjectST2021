@@ -219,6 +219,12 @@ namespace WhackAStoodent.Client
                         moleScored.Invoke(mole_scored_message._pointsGained);
                     }
                     break;
+                case EMessageType.Error:
+                    if(message is ErrorMessage error_message)
+                    {
+                        Debug.LogError($"Received error message: {error_message._type} -> {error_message._message}");
+                    }
+                    break;
                 default:
                     Debug.LogError($"{name}: received message of type {message.MessageType}. messages of that type should not be received?");
                     break;

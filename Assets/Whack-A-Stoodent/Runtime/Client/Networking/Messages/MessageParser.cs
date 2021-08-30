@@ -312,6 +312,7 @@ namespace WhackAStoodent.Client.Networking.Messages
                     if (TryParseStartedGameMessage(messageBytes, out parsedMessage)) return true;
                     break;
                 case EMessageType.LoadedGame:
+                    Debug.Log("Received LoadedGame Message");
                     if (TryParseLoadedGameMessage(out parsedMessage)) return true;
                     break;
                 case EMessageType.GameEnded:
@@ -339,6 +340,7 @@ namespace WhackAStoodent.Client.Networking.Messages
                     throw new ArgumentException($"should not need to parse a message with messageType {message_type} in this direction (byte to message)");
             }
 
+            Debug.LogError($"the given message could not be parsed. it had type {message_type}");
             parsedMessage = null;
             return false;
         }
@@ -615,20 +617,20 @@ namespace WhackAStoodent.Client.Networking.Messages
             
             EHoleIndex hole_index = (EHoleIndex) messageBytes[1];
             long points_gained =  BitConverter.ToInt64(messageBytes, 2);
-            Vector2 position =  new Vector2(BitConverter.ToSingle(messageBytes, 10), BitConverter.ToInt64(messageBytes, 14));
+            Vector2 position =  new Vector2(BitConverter.ToSingle(messageBytes, 10), BitConverter.ToSingle(messageBytes, 14));
             
             parsedMessage = new HitSuccessMessage(hole_index, points_gained, position);
             return true;
         }
         private static bool TryParseHitFailMessage(byte[] messageBytes, out AMessage parsedMessage)
         {
-            if (messageBytes.Length < 18)
+            if (messageBytes.Length < 9)
             {
                 parsedMessage = null;
                 return false;
             }
             
-            Vector2 position =  new Vector2(BitConverter.ToSingle(messageBytes, 1), BitConverter.ToInt64(messageBytes, 5));
+            Vector2 position =  new Vector2(BitConverter.ToSingle(messageBytes, 1), BitConverter.ToSingle(messageBytes, 5));
             
             parsedMessage = new HitFailMessage(position);
             return true;
@@ -725,6 +727,7 @@ namespace WhackAStoodent.Client.Networking.Messages
             }
             
             dynamicString = Encoding.Unicode.GetString(buffer, startIndex, dynamic_string_length);
+            Debug.Log($"parsed dynamic string from server: {dynamicString}");
             newIndex = startIndex + dynamic_string_length;
             return true;
         }

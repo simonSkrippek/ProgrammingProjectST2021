@@ -141,6 +141,8 @@ namespace WhackAStoodent.Client.Networking.Connectors
             {
                 if (MessageParser.ParseMessage(received_message.Message, out AMessage parsed_message))
                     ReceivedMessageFromServer?.Invoke(parsed_message);
+                else
+                    Debug.LogError("A Message could not be parsed appropriately");
             }
         }
 

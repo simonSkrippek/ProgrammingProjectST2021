@@ -65,10 +65,12 @@ namespace WhackAStoodent.Input
                 : (hit_position.y > .5 ? EHoleIndex.TopLeft : EHoleIndex.BottomLeft);
             if(hole_index == _lastMoleLook)
             {
+                Debug.Log("Invoking Hid Looked Input");
                 moleHidInputEvent.Invoke();
             }
             else if(hole_index != _lastMoleLook)
             {
+                Debug.Log("Invoking Mole Looked Input");
                 moleLookedInputEvent.Invoke(hole_index);
             }
         }
