@@ -25,11 +25,11 @@ namespace WhackAStoodent.UI.InGame
             moleScoredEvent.Subscribe(HandleMoleScored);
         }
 
-        private void HandleGameStarted(string opponentUserName, EGameRole opponentGameRole)
+        private void HandleGameStarted(string opponentUserName, EGameRole playerGameRole)
         {
             string mole_username;
             string hitter_username;
-            if (opponentGameRole == EGameRole.Hitter)
+            if (playerGameRole == EGameRole.Mole)
             {
                 hitter_username = opponentUserName;
                 mole_username = StorageUtility.LoadClientName();

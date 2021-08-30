@@ -6,6 +6,7 @@ using WhackAStoodent.Client;
 using WhackAStoodent.Client.Networking.Messages;
 using WhackAStoodent.Events;
 using WhackAStoodent.Helper;
+using WhackAStoodent.Input;
 using WhackAStoodent.UI;
 
 namespace WhackAStoodent.GameState
@@ -46,7 +47,7 @@ namespace WhackAStoodent.GameState
         [SerializeField] private NoParameterEvent allPlayersLoadedGameEvent;
         [SerializeField] private StringGameRoleEvent gameStartedEvent;
         [SerializeField] private MatchDataEvent gameEndedEvent;
-        
+
         //=================== UnityEvents ============================
         private void Start()
         {
@@ -182,6 +183,7 @@ namespace WhackAStoodent.GameState
             if (_currentGameState == EGameState.WaitingForAnswerToPlayRequest)
             {
                 ChangeGameState(EGameState.LoadingPlaySession);
+                InGameInputHandler.SetPlayerGameRole(playerGameRole);
             }
             else
             {
