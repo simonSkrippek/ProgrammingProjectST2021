@@ -157,8 +157,7 @@ namespace WhackAStoodent.Client.Networking.Messages
         {
             if (messageToParse is PlayWithSessionIDMessage play_with_session_id_message_to_parse)
             {
-                int required_number_of_bytes = 5;
-                messageBytes = new byte[required_number_of_bytes];
+                messageBytes = new byte[7];
                 messageBytes[0] = (byte) EMessageType.PlayWithSessionID;
 
                 Encoding.ASCII.GetBytes(play_with_session_id_message_to_parse._sessionID).CopyTo(messageBytes, 1);
