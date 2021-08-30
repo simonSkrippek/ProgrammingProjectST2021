@@ -28,10 +28,10 @@ namespace WhackAStoodent.Client.Logging
         }
         private void OnSentMessageToServer(AMessage obj)
         {
-            if (enabled)
-            {
+            // if (enabled)
+            // {
                 Debug.Log($"Client has successfully sent a message of type {obj.MessageType} to the server");
-            }
+            // }
         }
     }
 }

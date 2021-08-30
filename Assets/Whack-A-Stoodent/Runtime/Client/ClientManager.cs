@@ -14,8 +14,6 @@ namespace WhackAStoodent.Client
     {
         [SerializeField] private EConnectionType connectionType = default;
         private AConnector _connector;
-
-        public static event Action<ClientManager> OnClientManagerAvailable; 
         
         [Header("Events")]
         [SerializeField] private NoParameterEvent readyForAuthentication;
@@ -43,20 +41,36 @@ namespace WhackAStoodent.Client
         protected override void OnEnable()
         {
             base.OnEnable();
-            if (Instance == this)
-            {
-                OnClientManagerAvailable?.Invoke(this);
-                
-                InitializeConnector();
-                if (!_connector.Connect())
-                {
-                    _connector.DisconnectedFromServer += OnDisconnectedFromServer;
-                    Debug.Log("client host does not seem able to connect");
-                }
-            }
 
             Application.wantsToQuit += HandleApplicationQuit;
         }
+
+        private void Start()
+        {
+            if(Instance != this) Debug.LogError("This shouldnt run, not the ClientManager Instance");
+            
+            InitializeConnector();
+            //Debug.Log("Initialized Connector, attempting to connect");
+            if (!_connector.Connect())
+            {
+                Debug.Log("client host does not seem able to connect");
+            }
+            else
+            {
+                //Debug.Log("Managed to Connected");
+                readyForAuthentication.Invoke();
+            }
+        }
+
+        protected override void OnDisable()
+        {
+            _connector?.Dispose();
+            _connector = null;
+            
+            Application.wantsToQuit -= HandleApplicationQuit;
+        }
+        
+        
         private void InitializeConnector()
         {
             _connector?.Dispose();
@@ -107,11 +121,7 @@ namespace WhackAStoodent.Client
         }
         
         
-        protected override void OnDisable()
-        {
-            _connector?.Dispose();
-            _connector = null;
-        }
+        
         
         private void InvokeAppropriateMessageEvent(AMessage message)
         {

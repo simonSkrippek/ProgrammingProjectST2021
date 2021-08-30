@@ -88,6 +88,7 @@ namespace WhackAStoodent.Client.Networking.Connectors
                 return false;
             }
 
+            _connectedToServerPeer = true;
             return true;
         }
         public override void Disconnect()
@@ -110,7 +111,10 @@ namespace WhackAStoodent.Client.Networking.Connectors
         protected override void SendMessageInternal(AMessage message)
         {
             if (MessageParser.ParseMessage(message, out byte[] message_bytes))
+            {
+                Debug.Log("Enqueuing Message To Server");
                 _messagesToSend.Enqueue(new CustomMessageToSend(_serverPeer, 0, message_bytes, message));
+            }
             else
                 Debug.LogError($"Message of type {message.GetType()} could not be parsed and thus not sent to the server.");
         }
@@ -214,7 +218,7 @@ namespace WhackAStoodent.Client.Networking.Connectors
         
         private void HandleIncomingMessages()
         {
-            bool HasNetworkEvent(out Event networkEvent) => !(_clientHost.CheckEvents(out networkEvent) > 0 || _clientHost.Service((int) _timeoutTime, out networkEvent) > 0);
+            bool HasNetworkEvent(out Event networkEvent) => _clientHost.CheckEvents(out networkEvent) > 0 || _clientHost.Service((int) _timeoutTime, out networkEvent) > 0;
 
             if (HasNetworkEvent(out Event network_event))
             {
@@ -250,6 +254,7 @@ namespace WhackAStoodent.Client.Networking.Connectors
 
         private void HandleOutgoingMessages()
         {
+            //Debug.Log("HandlingOutgoingMessages");
             while (_messagesToSend.TryDequeue(out CustomMessageToSend message_to_send))
             {
                 SendOutgoingMessage(message_to_send);
@@ -258,8 +263,10 @@ namespace WhackAStoodent.Client.Networking.Connectors
 
         private void SendOutgoingMessage(CustomMessageToSend messageToSend)
         {
+            Debug.Log("Trying to send outgoing message");
             if (IsConnected(messageToSend.Recipient))
             {
+                Debug.Log("sent outgoing message");
                 Packet packet = default;
                 packet.Create(messageToSend.Message, PacketFlags.Reliable);
                 if (messageToSend.Recipient.Send(0, ref packet))
@@ -271,6 +278,10 @@ namespace WhackAStoodent.Client.Networking.Connectors
                 {
                     Debug.Log("message could not be sent successfully");
                 }
+            }
+            else
+            {
+                Debug.LogWarning($"not connected to message recipient {messageToSend.Recipient}");
             }
         }
 

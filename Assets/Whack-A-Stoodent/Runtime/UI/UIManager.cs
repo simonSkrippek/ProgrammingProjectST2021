@@ -37,6 +37,14 @@ namespace WhackAStoodent.UI
                 if(!uiDict.ContainsKey(value))
                     uiDict.Add(value, null);
             }
+
+            foreach (Transform child in transform)
+            {
+                if (TryGetComponent<Canvas>(out Canvas canvas))
+                {
+                    canvas.sortingOrder = child.GetSiblingIndex();
+                }
+            }
         }
         
         public void ActivateUIScreen(UIState state, bool displayAdditively = false)

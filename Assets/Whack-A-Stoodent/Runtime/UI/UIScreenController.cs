@@ -27,7 +27,7 @@ namespace WhackAStoodent.UI
 
         private void UpdateContentActive()
         {
-            Debug.Log($"Setting content active to {isActive}");
+            //Debug.Log($"Setting content active to {isActive}");
             content.gameObject.SetActive(isActive);
         }
 

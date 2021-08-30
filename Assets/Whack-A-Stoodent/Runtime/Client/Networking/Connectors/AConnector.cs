@@ -23,6 +23,7 @@ namespace WhackAStoodent.Client.Networking.Connectors
         public abstract void Dispose();
         public void SendMessage(AMessage message)
         {
+            Debug.Log("Sending Message To Server");
             RequestedSendingMessageToServer?.Invoke(message);
             SendMessageInternal(message);
         }

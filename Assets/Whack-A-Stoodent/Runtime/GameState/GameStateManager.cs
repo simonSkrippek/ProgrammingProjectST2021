@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -120,6 +121,7 @@ namespace WhackAStoodent.GameState
         //================== Server Message Handling ===============
         private void HandleReadyForAuthentication()
         {
+            Debug.Log("Ready for authentication");
             if (_currentGameState == EGameState.Connecting)
             {
                 ChangeGameState(EGameState.Unauthenticated);
@@ -132,6 +134,7 @@ namespace WhackAStoodent.GameState
         }
         private void HandleAuthenticationAcknowledged(string username)
         {
+            Debug.Log("Authentication Acknowledged received"); 
             if (_currentGameState == EGameState.Unauthenticated)
             {
                 ChangeGameState(EGameState.Authenticated);
@@ -433,6 +436,7 @@ namespace WhackAStoodent.GameState
         private void ChangeGameState(EGameState gameState)
         {
             Debug.Log($"Game State Changed: {gameState}");
+            _currentGameState = gameState;
             switch (gameState)
             {
                 case EGameState.PreConnect when SceneManager.IsSceneLoadedOrLoading(Scenes.Networking.Index()):
@@ -446,7 +450,8 @@ namespace WhackAStoodent.GameState
                         () => UIManager.Instance.ActivateUIScreen(UIManager.UIState.Connecting));
                     break;
                 case EGameState.Unauthenticated:
-                    UIManager.Instance.ActivateUIScreen(UIManager.UIState.UsernameInput);
+                    var coroutine = LoadAuthenticateScreenInASecond();
+                    StartCoroutine(coroutine);
                     break;
                 case EGameState.Authenticated:
                     UIManager.Instance.ActivateUIScreen(UIManager.UIState.MainMenu);
@@ -471,6 +476,14 @@ namespace WhackAStoodent.GameState
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        private IEnumerator LoadAuthenticateScreenInASecond()
+        {
+            yield return new WaitForEndOfFrame();
+            yield return new WaitForEndOfFrame();
+            yield return new WaitForEndOfFrame();
+            UIManager.Instance.ActivateUIScreen(UIManager.UIState.UsernameInput);
         }
 
         private void LoadUISceneIfNotAlreadyLoaded([CanBeNull] Action onUISceneLoadedAction)

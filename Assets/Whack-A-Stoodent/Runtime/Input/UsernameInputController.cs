@@ -19,6 +19,7 @@ namespace WhackAStoodent.Input
 
         public void HandleUsernameConfirmation()
         {
+            //Debug.Log("Confirming username");
             var input_user_name = usernameInputField.text;
             if(IsUsernameValid(input_user_name))
                 usernameInputEvent.Invoke(input_user_name);
