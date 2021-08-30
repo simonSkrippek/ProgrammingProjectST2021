@@ -518,16 +518,6 @@ namespace WhackAStoodent.Client.Networking.Messages
         {
             int current_byte_index = 1; 
             
-            //player role index parsing
-            if (current_byte_index + 1 > messageBytes.Length)
-            {
-                parsedMessage = null;
-                return false;
-            }
-            
-            EGameRole player_game_role = (EGameRole)messageBytes[1];
-            current_byte_index += 1;
-            
             //session code parsing
             if (!TryParseSessionCode(messageBytes, out string session_code, current_byte_index, out int new_byte_index))
             {
@@ -543,7 +533,7 @@ namespace WhackAStoodent.Client.Networking.Messages
                 return false;
             }
 
-            parsedMessage = new PlayRequestMessage(player_game_role, opponent_name, session_code);
+            parsedMessage = new PlayRequestMessage(opponent_name, session_code);
             return true;
         }
         private static bool TryParseDenyPlayRequestMessage(byte[] messageBytes, out AMessage parsedMessage)

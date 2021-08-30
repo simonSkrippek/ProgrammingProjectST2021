@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using WhackAStoodent.Client;
+using WhackAStoodent.Client.Networking.Messages;
 using WhackAStoodent.Events;
 using WhackAStoodent.Helper;
 using WhackAStoodent.UI;
@@ -18,11 +18,21 @@ namespace WhackAStoodent.GameState
 
         private SceneManager SceneManager => WhackAStoodent.SceneManager.Instance;
         
-        [Header("Listened Events")]
         [Header("User Input Events")]
+        [Header("Listened Events")]
         [SerializeField] private StringEvent usernameInputEvent;
         [SerializeField] private NoParameterEvent confirmInputEvent;
         [SerializeField] private NoParameterEvent returnInputEvent;
+        [SerializeField] private NoParameterEvent mainMenuStartCreatePlayRequestInputEvent;
+        [SerializeField] private NoParameterEvent mainMenuAbortCreatePlayRequestInputEvent;
+        [SerializeField] private NoParameterEvent requestPlayWithRandomInputEvent;
+        [SerializeField] private StringEvent requestPlayWithSessionCodeInputEvent;
+        [SerializeField] private NoParameterEvent resultsScreenPlayAgainInputEvent;
+        [SerializeField] private NoParameterEvent resultsScreenReturnInputEvent;
+        [SerializeField] private NoParameterEvent acceptPlayRequestInputEvent;
+        [SerializeField] private NoParameterEvent declinePlayRequestInputEvent;
+        [SerializeField] private NoParameterEvent quitInputEvent;
+        
         [SerializeField] private HoleIndexEvent moleLookedInputEvent;
         [SerializeField] private NoParameterEvent moleHidInputEvent;
         [SerializeField] private Vector2Event hitterHitInputEvent;
@@ -31,82 +41,168 @@ namespace WhackAStoodent.GameState
         [SerializeField] private NoParameterEvent readyForAuthenticationEvent;
         [SerializeField] private StringEvent authenticationAcknowledgedEvent;
         [SerializeField] private NoParameterEvent authenticationDeniedEvent; 
-        [SerializeField] private StringGameRoleEvent receivedPlayRequestEvent;
+        [SerializeField] private StringEvent receivedPlayRequestEvent;
+        [SerializeField] private DenialReasonEvent receivedDenyPlayRequestEvent;
         [SerializeField] private NoParameterEvent allPlayersLoadedGameEvent;
         [SerializeField] private StringGameRoleEvent gameStartedEvent;
         [SerializeField] private MatchDataEvent gameEndedEvent;
         
-        private enum EGameState
+        //=================== UnityEvents ============================
+        private void Start()
         {
-            //not connected, game just started or was just reset. networking scene needs to be newly loaded
-            PreConnect,
-            //not connected, game just started or was just reset. networking scene needs to be newly loaded
-            Connecting,
-            //connected, but not authenticated -> no action, can only authenticate. back quits
-            Unauthenticated,
+            ChangeGameState(EGameState.PreConnect);
+        }
+        protected override void OnEnable()
+        {
+            base.OnEnable();
             
-            //connected, authenticated, doing menu stuff -> can request games or receive game requests. back bring up want to quit menu.
-            Authenticated,
-            //after sending a play request -> no action, can only wait for response. back does nothing?
-            WaitingForAnswerToPlayRequest,
-            //after receiving a play request -> action required, accept or deny. back denies
-            AnsweringPlayRequest,
-            //when loading, before playing -> may only send finished loading message, until receiving one. back does nothing
-            LoadingPlaySession,
-            //while playing -> may send gameplay messages and receive them, until game end messages
-            InPlaySession,
-            //same as authenticated -> may send gameplay messages and receive them, until game end messages
-            InResultsScreen,
+            readyForAuthenticationEvent.Subscribe(HandleReadyForAuthentication);
+            authenticationAcknowledgedEvent.Subscribe(HandleAuthenticationAcknowledged);
+            authenticationDeniedEvent.Subscribe(HandleAuthenticationDenied);
+            receivedPlayRequestEvent.Subscribe(HandleReceivedPlayRequest);
+            receivedDenyPlayRequestEvent.Subscribe(HandleReceivedDenyPlayRequest);
+            gameStartedEvent.Subscribe(HandleGameStarted);
+            allPlayersLoadedGameEvent.Subscribe(HandleAllPlayersLoadedGame);
+            gameEndedEvent.Subscribe(HandleGameEnded);
+            
+            moleLookedInputEvent.Subscribe(HandleMoleLookedInput);
+            moleHidInputEvent.Subscribe(HandleMoleHidInput);
+            hitterHitInputEvent.Subscribe(HandleHitterHitInput);
+
+            confirmInputEvent.Subscribe(HandleConfirmInput);
+            returnInputEvent.Subscribe(HandleReturnInput);
+            usernameInputEvent.Subscribe(HandleUsernameInput);
+            mainMenuStartCreatePlayRequestInputEvent.Subscribe(HandleCreatePlayRequestInput);
+            mainMenuAbortCreatePlayRequestInputEvent.Subscribe(HandleAbortCreatePlayRequestInput);
+            requestPlayWithRandomInputEvent.Subscribe(HandleRequestPlayWithRandomInput);
+            requestPlayWithSessionCodeInputEvent.Subscribe(HandleRequestPlayWithSessionCodeInput);
+            resultsScreenPlayAgainInputEvent.Subscribe(HandlePlayAgainInput);
+            resultsScreenReturnInputEvent.Subscribe(HandleReturnToMainMenuInput);
+            acceptPlayRequestInputEvent.Subscribe(HandleAcceptPlayRequestInput);
+            declinePlayRequestInputEvent.Subscribe(HandleDeclinePlayRequestInput);
+            quitInputEvent.Subscribe(HandleQuitInput);
+        }
+        protected override void OnDisable()
+        {
+            base.OnDisable();
+            
+            readyForAuthenticationEvent.Unsubscribe(HandleReadyForAuthentication);
+            authenticationAcknowledgedEvent.Unsubscribe(HandleAuthenticationAcknowledged);
+            authenticationDeniedEvent.Unsubscribe(HandleAuthenticationDenied);
+            receivedPlayRequestEvent.Unsubscribe(HandleReceivedPlayRequest);
+            receivedDenyPlayRequestEvent.Unsubscribe(HandleReceivedDenyPlayRequest);
+            gameStartedEvent.Unsubscribe(HandleGameStarted);
+            allPlayersLoadedGameEvent.Unsubscribe(HandleAllPlayersLoadedGame);
+            gameEndedEvent.Unsubscribe(HandleGameEnded);
+            
+            moleLookedInputEvent.Unsubscribe(HandleMoleLookedInput);
+            moleHidInputEvent.Unsubscribe(HandleMoleHidInput);
+            hitterHitInputEvent.Unsubscribe(HandleHitterHitInput);
+
+            confirmInputEvent.Unsubscribe(HandleConfirmInput);
+            returnInputEvent.Unsubscribe(HandleReturnInput);
+            usernameInputEvent.Unsubscribe(HandleUsernameInput);
+            mainMenuStartCreatePlayRequestInputEvent.Unsubscribe(HandleCreatePlayRequestInput);
+            mainMenuAbortCreatePlayRequestInputEvent.Unsubscribe(HandleAbortCreatePlayRequestInput);
+            requestPlayWithRandomInputEvent.Unsubscribe(HandleRequestPlayWithRandomInput);
+            requestPlayWithSessionCodeInputEvent.Unsubscribe(HandleRequestPlayWithSessionCodeInput);
+            resultsScreenPlayAgainInputEvent.Unsubscribe(HandlePlayAgainInput);
+            resultsScreenReturnInputEvent.Unsubscribe(HandleReturnToMainMenuInput);
+            acceptPlayRequestInputEvent.Unsubscribe(HandleAcceptPlayRequestInput);
+            declinePlayRequestInputEvent.Unsubscribe(HandleDeclinePlayRequestInput);
+            quitInputEvent.Unsubscribe(HandleQuitInput);
         }
 
-        private void ChangeGameState(EGameState gameState)
+
+        
+
+        //================== Server Message Handling ===============
+        private void HandleReadyForAuthentication()
         {
-            Debug.Log($"Game State Changed: {gameState}");
-            switch (gameState)
+            if (_currentGameState == EGameState.Connecting)
             {
-                case EGameState.PreConnect when SceneManager.IsSceneLoadedOrLoading(Scenes.Networking.Index()):
-                    ReloadNetworking();
-                    break;
-                case EGameState.PreConnect:
-                    LoadNetworking();
-                    break;
-                case EGameState.Connecting:
-                    if(!SceneManager.IsSceneLoadedOrLoading(Scenes.UI.Index()))
-                        SceneManager.LoadSceneAsync(Scenes.UI.Index(),
-                            operation =>
-                            {
-                                operation.allowSceneActivation = true;
-                                UIManager.Instance.ActivateUIScreen(UIManager.UIState.Connecting);
-                            },
-                            LoadSceneMode.Additive);
-                    else
-                        UIManager.Instance.ActivateUIScreen(UIManager.UIState.Connecting);
-                    break;
-                case EGameState.Unauthenticated:
-                    UIManager.Instance.ActivateUIScreen(UIManager.UIState.UsernameInput);
-                    break;
-                case EGameState.Authenticated:
-                    break;
-                case EGameState.WaitingForAnswerToPlayRequest:
-                    break;
-                case EGameState.AnsweringPlayRequest:
-                    break;
-                case EGameState.LoadingPlaySession:
-                    break;
-                case EGameState.InPlaySession:
-                    break;
-                case EGameState.InResultsScreen:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                ChangeGameState(EGameState.Unauthenticated);
+            }
+            else
+            {
+                Debug.LogWarning($"Should not be receiving ReadyForAuthentication in game state {_currentGameState}");  
+                
             }
         }
+        private void HandleAuthenticationAcknowledged(string username)
+        {
+            if (_currentGameState == EGameState.Unauthenticated)
+            {
+                ChangeGameState(EGameState.Authenticated);
+            }
+            else
+            {
+                Debug.LogWarning($"Should not be receiving authenticationAcknowledged in game state {_currentGameState}");  
+                
+            }
+        }
+        private void HandleAuthenticationDenied()
+        {
+            if (_currentGameState == EGameState.Unauthenticated)
+            {
+                ChangeGameState(EGameState.PreConnect);
+            }
+            else
+            {
+                Debug.LogWarning($"Should not be receiving authenticationDenied in game state {_currentGameState}");  
+                
+            }
+        }
+        private void HandleReceivedPlayRequest(string opponentUsername)
+        {
+            if (_currentGameState == EGameState.Authenticated)
+            {
+                UIManager.Instance.DeactivateUIScreen(UIManager.UIState.CreatePlayRequest);
+                ChangeGameState(EGameState.AnsweringPlayRequest);
+            }
+            else
+            {
+                Debug.LogWarning($"Should not be receiving authenticationDenied in game state {_currentGameState}");  
+                
+            }
+        }
+        private void HandleReceivedDenyPlayRequest(DenyPlayRequestMessage.EDenialReason denialReason)
+        {
+            if (_currentGameState == EGameState.WaitingForAnswerToPlayRequest)
+            {
+                ChangeGameState(EGameState.Authenticated);
+            }
+            else
+            {
+                Debug.LogWarning($"Should not be receiving DenyPlayRequest in game state {_currentGameState}");
+            }
+        }
+        private void HandleGameStarted(string opponentName, EGameRole playerGameRole)
+        {
+            if (_currentGameState == EGameState.WaitingForAnswerToPlayRequest)
+            {
+                ChangeGameState(EGameState.LoadingPlaySession);
+            }
+            else
+            {
+                Debug.LogWarning($"Should not be receiving GameStarted in game state {_currentGameState}");
+            }
+        }
+        private void HandleInGameSceneLoaded(AsyncOperation asyncOperation)
+        {
+            asyncOperation.allowSceneActivation = true;
+            ClientManager.ConfirmGameIsLoaded();
+        }
+        private void HandleAllPlayersLoadedGame()
+        {
+            ChangeGameState(EGameState.InPlaySession);
+        }
+        private void HandleGameEnded(MatchData gameResult)
+        {
+            ChangeGameState(EGameState.InResultsScreen);
+        }
 
-
-        /// <summary>
-        /// do sth when the confirm input is given, or the confirm button is pressed in whatever scene we are in
-        /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        //================== User Input Handling ===============
         public void HandleConfirmInput()
         {
             switch (_currentGameState)
@@ -122,7 +218,7 @@ namespace WhackAStoodent.GameState
                 case EGameState.WaitingForAnswerToPlayRequest:
                     break;
                 case EGameState.AnsweringPlayRequest:
-                    AcceptPlayRequest();
+                    HandleAcceptPlayRequestInput();
                     break;
                 case EGameState.LoadingPlaySession:
                     break;
@@ -135,11 +231,6 @@ namespace WhackAStoodent.GameState
                     throw new ArgumentOutOfRangeException();
             }
         }
-
-        /// <summary>
-        /// do sth when the return input is given, or the return button is pressed in whatever scene we are in
-        /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
         public void HandleReturnInput()
         {
             switch (_currentGameState)
@@ -161,7 +252,7 @@ namespace WhackAStoodent.GameState
                     //nothing? TODO should cancel play request
                     break;
                 case EGameState.AnsweringPlayRequest:
-                    DeclinePlayRequest();
+                    HandleDeclinePlayRequestInput();
                     break;
                 case EGameState.LoadingPlaySession:
                     //nothing
@@ -176,19 +267,227 @@ namespace WhackAStoodent.GameState
                     throw new ArgumentOutOfRangeException();
             }
         }
-
-        private void AcceptPlayRequest()
+        private void HandleUsernameInput(string username)
         {
-            //Todo send message for accepting
-            
+            if (_currentGameState == EGameState.Unauthenticated)
+            {
+                ClientManager.Authenticate(username);
+            }
+            else
+            {
+                Debug.LogWarning($"Should not be triggering usernameInputEvent in game state {_currentGameState}");            
+            }
         }
-        private void DeclinePlayRequest()
+        private void HandleCreatePlayRequestInput()
         {
-            //Todo send message for declining
-            
-            ChangeGameState(EGameState.Authenticated);
+            if (_currentGameState == EGameState.Authenticated)
+            {
+                UIManager.Instance.ActivateUIScreen(UIManager.UIState.CreatePlayRequest, true);
+            }
+            else
+            {
+                Debug.LogWarning($"Should not be receiving CreatePlayRequestInput in game state {_currentGameState}");  
+                
+            }
+        }
+        private void HandleAbortCreatePlayRequestInput()
+        {
+            if (_currentGameState == EGameState.Authenticated)
+            {
+                UIManager.Instance.DeactivateUIScreen(UIManager.UIState.CreatePlayRequest);
+            }
+            else
+            {
+                Debug.LogWarning($"Should not be receiving AbortCreatePlayRequestInput in game state {_currentGameState}");  
+                
+            }
+        }
+        private void HandleRequestPlayWithRandomInput()
+        {
+            if (_currentGameState == EGameState.Authenticated)
+            {
+                ChangeGameState(EGameState.WaitingForAnswerToPlayRequest);
+                ClientManager.RequestPlayWithRandom();
+            }
+            else
+            {
+                Debug.LogWarning($"Should not be receiving RequestPlayWithRandomInput in game state {_currentGameState}");
+            }
+        }
+        private void HandleRequestPlayWithSessionCodeInput(string opponentSessionCode)
+        {
+            if (_currentGameState == EGameState.Authenticated)
+            {
+                ChangeGameState(EGameState.WaitingForAnswerToPlayRequest);
+                ClientManager.RequestPlayWithSessionCode(opponentSessionCode);
+            }
+            else
+            {
+                Debug.LogWarning($"Should not be receiving RequestPlayWithSessionCodeInput in game state {_currentGameState}");
+            }
+        }
+        private void HandlePlayAgainInput()
+        {
+            if (_currentGameState == EGameState.InResultsScreen)
+            {
+                ChangeGameState(EGameState.WaitingForAnswerToPlayRequest);
+            }
+            else
+            {
+                Debug.LogWarning($"Should not be receiving PlayAgainInput in game state {_currentGameState}");
+            }
+        }
+        private void HandleReturnToMainMenuInput()
+        {
+            if (_currentGameState == EGameState.InResultsScreen)
+            {
+                ChangeGameState(EGameState.Authenticated);
+            }
+            else
+            {
+                Debug.LogWarning($"Should not be receiving ReturnToMainMenuInput in game state {_currentGameState}");
+            }
+        }
+        private void HandleAcceptPlayRequestInput()
+        {
+            if (_currentGameState == EGameState.AnsweringPlayRequest)
+            {
+                ClientManager.AcceptPlayRequest();
+                ChangeGameState(EGameState.LoadingPlaySession);
+            }
+            else
+            {
+                Debug.LogWarning($"Should not be receiving AcceptPlayRequestInput in game state {_currentGameState}");  
+                
+            }
+        }
+        private void HandleDeclinePlayRequestInput()
+        {
+            if (_currentGameState == EGameState.AnsweringPlayRequest)
+            {
+                ClientManager.DenyPlayRequest();
+                ChangeGameState(EGameState.Authenticated);
+            }
+            else
+            {
+                Debug.LogWarning($"Should not be receiving DeclinePlayRequestInput in game state {_currentGameState}");  
+                
+            }
+        }
+        private void HandleQuitInput()
+        {
+            if (_currentGameState != EGameState.InPlaySession 
+                && _currentGameState != EGameState.LoadingPlaySession)
+            {
+                if(_currentGameState == EGameState.AnsweringPlayRequest)
+                    HandleDeclinePlayRequestInput();
+                SceneManager.QuitApplication();
+            }
+            else
+            {
+                Debug.LogWarning("may not arbitrarily quit while in play session");
+            }
         }
         
+        //================== InGame User Input Handling ===============
+        private void HandleMoleLookedInput(EHoleIndex holeIndex)
+        {
+            if (_currentGameState == EGameState.InPlaySession)
+            {
+                ClientManager.SendMoleLook(holeIndex);
+            }
+            else
+            {
+                Debug.LogWarning($"Should not be receiving MoleLookedInput in game state {_currentGameState}");  
+                
+            }
+        }
+        private void HandleMoleHidInput()
+        {
+            if (_currentGameState == EGameState.InPlaySession)
+            {
+                ClientManager.SendMoleHide();
+            }
+            else
+            {
+                Debug.LogWarning($"Should not be receiving MoleHidInput in game state {_currentGameState}");  
+                
+            }
+        }
+        private void HandleHitterHitInput(Vector2 position)
+        {
+            if (_currentGameState == EGameState.InPlaySession)
+            {
+                ClientManager.SendHitterHit(position);
+            }
+            else
+            {
+                Debug.LogWarning($"Should not be receiving HitterHitInput in game state {_currentGameState}");  
+                
+            }
+        }
+        
+        //=================== Functionality ==========================
+        private void ChangeGameState(EGameState gameState)
+        {
+            Debug.Log($"Game State Changed: {gameState}");
+            switch (gameState)
+            {
+                case EGameState.PreConnect when SceneManager.IsSceneLoadedOrLoading(Scenes.Networking.Index()):
+                    ReloadNetworking();
+                    break;
+                case EGameState.PreConnect:
+                    LoadNetworking();
+                    break;
+                case EGameState.Connecting:
+                    LoadUISceneIfNotAlreadyLoaded(
+                        () => UIManager.Instance.ActivateUIScreen(UIManager.UIState.Connecting));
+                    break;
+                case EGameState.Unauthenticated:
+                    UIManager.Instance.ActivateUIScreen(UIManager.UIState.UsernameInput);
+                    break;
+                case EGameState.Authenticated:
+                    UIManager.Instance.ActivateUIScreen(UIManager.UIState.MainMenu);
+                    break;
+                case EGameState.WaitingForAnswerToPlayRequest:
+                    UIManager.Instance.ActivateUIScreen(UIManager.UIState.WaitForPlayRequestResponse, true);
+                    break;
+                case EGameState.AnsweringPlayRequest:
+                    UIManager.Instance.ActivateUIScreen(UIManager.UIState.RespondToPlayRequest, true);
+                    break;
+                case EGameState.LoadingPlaySession:
+                    UIManager.Instance.ActivateUIScreen(UIManager.UIState.Loading);
+                    SceneManager.LoadSceneAsync(Scenes.InGame.Index(), HandleInGameSceneLoaded, LoadSceneMode.Additive);
+                    break;
+                case EGameState.InPlaySession:
+                    UIManager.Instance.ActivateUIScreen(UIManager.UIState.InGame);
+                    break;
+                case EGameState.InResultsScreen:
+                    UIManager.Instance.ActivateUIScreen(UIManager.UIState.GameResults);
+                    SceneManager.UnloadSceneAsync(Scenes.InGame.Index());
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private void LoadUISceneIfNotAlreadyLoaded([CanBeNull] Action onUISceneLoadedAction)
+        {
+            if (!SceneManager.IsSceneLoadedOrLoading(Scenes.UI.Index()))
+            {
+                SceneManager.LoadSceneAsync(Scenes.UI.Index(), operation =>
+                    {
+                        operation.allowSceneActivation = true;
+                        onUISceneLoadedAction?.Invoke();
+                    },
+                    LoadSceneMode.Additive);
+            }
+            else
+            {
+                onUISceneLoadedAction?.Invoke();
+            }
+        }
+
         public void ReloadNetworking()
         {
             SceneManager.UnloadSceneAsync(Scenes.InGame.Index());
@@ -211,10 +510,9 @@ namespace WhackAStoodent.GameState
                 LoadSceneMode.Additive);
         }
 
-        private void Start()
-        {
-            ChangeGameState(EGameState.PreConnect);
-        }
+        
+
+        
     }
     
     

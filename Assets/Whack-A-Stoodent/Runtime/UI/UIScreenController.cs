@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace WhackAStoodent.UI
 {
@@ -8,7 +7,7 @@ namespace WhackAStoodent.UI
         [SerializeField] private Transform content;
         private bool isActive = false;
 
-        private void OnEnable()
+        private void Start()
         {
             UpdateContentActive();
         }
