@@ -28,9 +28,10 @@ namespace WhackAStoodent.Client
         [SerializeField] private NoParameterEvent authenticationDenied; 
         [SerializeField] private ByteArrayEvent receivedPingResponse; 
         [SerializeField] private MatchDataArrayEvent receivedMatchHistory; 
-        [SerializeField] private StringGameRoleEvent receivedPlayRequest; 
+        [SerializeField] private StringEvent receivedPlayRequest; 
         [SerializeField] private NoParameterEvent allPlayersLoadedGame; 
         [SerializeField] private StringGameRoleEvent gameStarted;
+        [SerializeField] private DenialReasonEvent denyPlayRequest;
         [SerializeField] private MatchDataEvent gameEnded;
         [SerializeField] private HoleIndexEvent moleLooked;
         [SerializeField] private NoParameterEvent moleHid;
@@ -151,13 +152,19 @@ namespace WhackAStoodent.Client
                 case EMessageType.PlayRequest:
                     if(message is PlayRequestMessage play_request_message)
                     {
-                        receivedPlayRequest.Invoke(play_request_message._opponentName, play_request_message._playerGameRole);
+                        receivedPlayRequest.Invoke(play_request_message._opponentName);
                     }
                     break;
                 case EMessageType.StartedGame:
                     if(message is StartedGameMessage started_game_message)
                     {
                         gameStarted.Invoke(started_game_message._opponentName, started_game_message._playerGameRole);
+                    }
+                    break;
+                case EMessageType.DenyPlayRequest:
+                    if(message is DenyPlayRequestMessage deny_play_request_message)
+                    {
+                        denyPlayRequest.Invoke(deny_play_request_message._denialReason);
                     }
                     break;
                 case EMessageType.LoadedGame:

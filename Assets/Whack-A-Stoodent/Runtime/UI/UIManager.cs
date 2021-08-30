@@ -13,12 +13,15 @@ namespace WhackAStoodent.UI
         {
             None = 0,
             Connecting = 1,
-            UsernameInput = 2,
-            MainMenu = 3,
-            Loading = 4,
-            InGame = 5,
-            GameResultsUI = 6,
-            UserStatsUI = 7,
+            Loading = 2,
+            UsernameInput = 3,
+            MainMenu = 4,
+            RespondToPlayRequest = 5,
+            CreatePlayRequest = 5,
+            WaitForPlayRequestResponse = 5,
+            InGame = 14,
+            GameResults = 15,
+            UserStatsUI = 20,
         }
 
         [SerializeField] private UIStateUIScreenControllerDictionary uiDict;
@@ -35,8 +38,9 @@ namespace WhackAStoodent.UI
             }
         }
 
-        public void ActivateUIScreen(UIState state)
+        public void ActivateUIScreen(UIState state, bool displayAdditively = false)
         {
+            //TODO handle additive ui
             if(state == _currentUIState) return;
             
             foreach (var pair in uiDict)
@@ -50,6 +54,11 @@ namespace WhackAStoodent.UI
                     pair.Value.Activate();
                 }
             }
+        }
+        
+        public void DeactivateUIScreen(UIState state)
+        {
+            //TODO
         }
     }
 }
