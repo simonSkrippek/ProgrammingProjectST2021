@@ -58,7 +58,6 @@ namespace WhackAStoodent.Client
             else
             {
                 //Debug.Log("Managed to Connected");
-                readyForAuthentication.Invoke();
             }
         }
 

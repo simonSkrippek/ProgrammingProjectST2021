@@ -52,7 +52,7 @@ namespace WhackAStoodent.GameState
         //=================== UnityEvents ============================
         private void Start()
         {
-            ChangeGameState(EGameState.PreConnect);
+            LoadUISceneIfNotAlreadyLoaded(() => ChangeGameState(EGameState.PreConnect));
         }
         protected override void OnEnable()
         {
@@ -446,12 +446,10 @@ namespace WhackAStoodent.GameState
                     LoadNetworking();
                     break;
                 case EGameState.Connecting:
-                    LoadUISceneIfNotAlreadyLoaded(
-                        () => UIManager.Instance.ActivateUIScreen(UIManager.UIState.Connecting));
+                    LoadUISceneIfNotAlreadyLoaded(() => UIManager.Instance.ActivateUIScreen(UIManager.UIState.Connecting));
                     break;
                 case EGameState.Unauthenticated:
-                    var coroutine = LoadAuthenticateScreenInASecond();
-                    StartCoroutine(coroutine);
+                    UIManager.Instance.ActivateUIScreen(UIManager.UIState.UsernameInput);
                     break;
                 case EGameState.Authenticated:
                     UIManager.Instance.ActivateUIScreen(UIManager.UIState.MainMenu);
@@ -478,31 +476,14 @@ namespace WhackAStoodent.GameState
             }
         }
 
-        private IEnumerator LoadAuthenticateScreenInASecond()
-        {
-            yield return new WaitForEndOfFrame();
-            yield return new WaitForEndOfFrame();
-            yield return new WaitForEndOfFrame();
-            UIManager.Instance.ActivateUIScreen(UIManager.UIState.UsernameInput);
-        }
-
         private void LoadUISceneIfNotAlreadyLoaded([CanBeNull] Action onUISceneLoadedAction)
         {
             if (!SceneManager.IsSceneLoadedOrLoading(Scenes.UI.Index()))
             {
-                SceneManager.LoadSceneAsync(Scenes.UI.Index(), operation =>
-                    {
-                        operation.allowSceneActivation = true;
-                        onUISceneLoadedAction?.Invoke();
-                    },
-                    LoadSceneMode.Additive);
+                SceneManager.LoadSceneAsync(Scenes.UI.Index(), LoadSceneMode.Additive);
             }
-            else
-            {
-                onUISceneLoadedAction?.Invoke();
-            }
+            onUISceneLoadedAction?.Invoke();
         }
-
         public void ReloadNetworking()
         {
             SceneManager.UnloadSceneAsync(Scenes.InGame.Index());
