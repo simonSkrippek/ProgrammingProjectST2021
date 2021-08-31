@@ -4,6 +4,7 @@ using UnityEngine;
 using WhackAStoodent.Client.Logging;
 using WhackAStoodent.Client.Networking.Connectors;
 using WhackAStoodent.Client.Networking.Messages;
+using WhackAStoodent.Database;
 using WhackAStoodent.Events;
 using WhackAStoodent.Helper;
 
@@ -14,6 +15,7 @@ namespace WhackAStoodent.Client
     {
         [SerializeField] private EConnectionType connectionType = default;
         private AConnector _connector;
+        [SerializeField] private DatabaseAPIConnector databaseAPIConnector;
         
         [Header("Events")]
         [SerializeField] private NoParameterEvent readyForAuthentication;
@@ -247,7 +249,11 @@ namespace WhackAStoodent.Client
         }
         public void RequestMatchHistory()
         {
-            _connector.SendGetMatchHistoryMessage();
+            databaseAPIConnector.RequestMatchHistory();
+        }
+        public void RequestUserStats()
+        {
+            databaseAPIConnector.RequestUserStats();
         }
         public void RequestPlayWithRandom()
         {

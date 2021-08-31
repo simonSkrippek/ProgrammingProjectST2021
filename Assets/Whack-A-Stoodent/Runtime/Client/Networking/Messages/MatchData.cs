@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace WhackAStoodent.Client.Networking.Messages
 {
@@ -17,14 +18,21 @@ namespace WhackAStoodent.Client.Networking.Messages
             _opponentScore = opponentScore;
         }
 
+        [JsonProperty("sessionID")]
         public readonly Guid _matchGuid;
             
+        [JsonProperty("yourScore")]
         public readonly string _playerName;
+        [JsonProperty("yourRole")]
         public readonly EGameRole _playerGameRole;
+        [JsonProperty("yourName")]
         public readonly long _playerScore;
             
+        [JsonProperty("opponentName")]
         public readonly string _opponentName;
+        [JsonProperty("opponentRole")]
         public readonly EGameRole _opponentGameRole;
+        [JsonProperty("opponentScore")]
         public readonly long _opponentScore;
     }
 }
