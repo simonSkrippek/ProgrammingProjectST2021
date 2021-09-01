@@ -9,9 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e833dbf1fa5440b0a86f6cad9c5267f6, type: 3}
-  m_Name: NetworkConnectionSettings
+  m_Script: {fileID: 11500000, guid: 4544ff7e22de4832b3c3d7340501f974, type: 3}
+  m_Name: ReceivedMatchHistoryEntriesEvent
   m_EditorClassIdentifier: 
-  ipAddress: localhost
-  port: 57007
-  timeoutTime: 15

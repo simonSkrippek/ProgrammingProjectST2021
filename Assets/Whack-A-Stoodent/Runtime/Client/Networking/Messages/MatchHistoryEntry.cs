@@ -3,11 +3,13 @@ using Newtonsoft.Json;
 
 namespace WhackAStoodent.Client.Networking.Messages
 {
-    public readonly struct MatchData
+    public readonly struct MatchHistoryEntry
     {
-        public MatchData(Guid matchGuid, string playerName, EGameRole playerGameRole, long playerScore, string opponentName, EGameRole opponentGameRole, long opponentScore)
+        public MatchHistoryEntry(Guid matchGuid, DateTime playedDateTime, string playerName, EGameRole playerGameRole, long playerScore, string opponentName, EGameRole opponentGameRole, long opponentScore)
         {
             _matchGuid = matchGuid;
+
+            _playedDateTime = playedDateTime;
             
             _playerName = playerName;
             _playerGameRole = playerGameRole;
@@ -20,6 +22,9 @@ namespace WhackAStoodent.Client.Networking.Messages
 
         [JsonProperty("sessionID")]
         public readonly Guid _matchGuid;
+        
+        [JsonProperty("playedDateTime")]
+        public readonly DateTime _playedDateTime;
             
         [JsonProperty("yourName")]
         public readonly string _playerName;
