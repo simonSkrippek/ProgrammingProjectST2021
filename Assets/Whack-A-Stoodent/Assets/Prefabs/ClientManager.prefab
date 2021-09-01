@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7642471448393173433}
   - component: {fileID: 7642471448393173430}
   - component: {fileID: 7642471448393173431}
+  - component: {fileID: 5505147272153214168}
   m_Layer: 0
   m_Name: ClientManager
   m_TagString: Untagged
@@ -75,6 +76,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   connectionType: 0
+  databaseAPIConnector: {fileID: 5505147272153214168}
   readyForAuthentication: {fileID: 11400000, guid: 41767d81105debd4282be3d0107acbb1, type: 2}
   connectionInterrupted: {fileID: 11400000, guid: df85d0de67c1a6840a4d98c246607fb4, type: 2}
   messageReceived: {fileID: 11400000, guid: 33378fbfc9144f149919e539861049a3, type: 2}
@@ -95,3 +97,19 @@ MonoBehaviour:
   hitterHitSuccessful: {fileID: 11400000, guid: d3ffe1822b61ec34cb590484a8c7b0db, type: 2}
   hitterHitFailed: {fileID: 11400000, guid: da030bf9b096efd4b9a412045b51a5a4, type: 2}
   hitterScored: {fileID: 11400000, guid: 4731fdadad0a41b48b81a617d3241324, type: 2}
+--- !u!114 &5505147272153214168
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7642471448393173428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51cd07e757ede6744af3c7f365d1edcb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serverAddress: http://whackastoodentstatistics.bigeti.de
+  gameEndedEvent: {fileID: 11400000, guid: d27f5f326e8fd834b9289e9100d8dc70, type: 2}
+  matchHistoryReceivedEvent: {fileID: 11400000, guid: afe522fd916002c4aa1a60259be65d12, type: 2}
+  userStatsReceivedEvent: {fileID: 11400000, guid: f5d18f8c62fe4464faf6a954246277fb, type: 2}
