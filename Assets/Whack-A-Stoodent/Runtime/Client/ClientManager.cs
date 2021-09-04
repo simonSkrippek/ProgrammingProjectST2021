@@ -16,31 +16,33 @@ namespace WhackAStoodent.Client
         [SerializeField] private EConnectionType connectionType = default;
         private AConnector _connector;
         [SerializeField] private DatabaseAPIConnector databaseAPIConnector;
-        
-        [Header("Events")]
-        [SerializeField] private NoParameterEvent readyForAuthentication;
+
+        [Header("Events")] [SerializeField] private NoParameterEvent readyForAuthentication;
         [SerializeField] private NoParameterEvent connectionInterrupted;
         [SerializeField] private AMessageEvent messageReceived;
         [SerializeField] private AMessageEvent requestedSendingMessageToServer;
         [SerializeField] private AMessageEvent sentMessageToServer;
-        
+
         [SerializeField] private StringEvent authenticationAcknowledged;
-        [SerializeField] private NoParameterEvent authenticationDenied; 
-        [SerializeField] private ByteArrayEvent receivedPingResponse; 
-        [SerializeField] private MatchDataArrayEvent receivedMatchHistory; 
-        [SerializeField] private StringEvent receivedPlayRequest; 
-        [SerializeField] private NoParameterEvent allPlayersLoadedGame; 
+        [SerializeField] private NoParameterEvent authenticationDenied;
+        [SerializeField] private ByteArrayEvent receivedPingResponse;
+        [SerializeField] private MatchDataArrayEvent receivedMatchHistory;
+        [SerializeField] private StringEvent receivedPlayRequest;
+        [SerializeField] private NoParameterEvent allPlayersLoadedGame;
         [SerializeField] private StringGameRoleEvent gameStarted;
         [SerializeField] private DenialReasonEvent denyPlayRequest;
         [SerializeField] private MatchDataEvent gameEnded;
         [SerializeField] private HoleIndexEvent moleLooked;
         [SerializeField] private NoParameterEvent moleHid;
         [SerializeField] private LongEvent moleScored;
-        [SerializeField] private Vector2HoleIndexEvent hitterHitSuccessful; 
-        [SerializeField] private Vector2Event hitterHitFailed; 
+        [SerializeField] private Vector2HoleIndexEvent hitterHitSuccessful;
+        [SerializeField] private Vector2Event hitterHitFailed;
         [SerializeField] private LongEvent hitterScored;
 
-        protected override void OnEnable()
+        //TODO assign session code whenever a game starts
+        public string LastOpponentSessionCode { get; private set;}
+
+    protected override void OnEnable()
         {
             base.OnEnable();
 

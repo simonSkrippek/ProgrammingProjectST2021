@@ -24,16 +24,16 @@ namespace WhackAStoodent.UI.ResultsScreen
         {
             if (matchData._opponentGameRole == EGameRole.Hitter)
             {
-                hitterUsernameText.text = matchData._opponentName;
+                hitterUsernameText.text = matchData._opponentName.ToUpper();
                 hitterScoreText.text = matchData._opponentScore.ToString();
-                moleUsernameText.text = matchData._playerName;
+                moleUsernameText.text = matchData._playerName.ToUpper();
                 moleScoreText.text = matchData._playerScore.ToString();
             }
             else
             {
-                hitterUsernameText.text = matchData._playerName;
+                hitterUsernameText.text = matchData._playerName.ToUpper();
                 hitterScoreText.text = matchData._playerScore.ToString();
-                moleUsernameText.text = matchData._opponentName;
+                moleUsernameText.text = matchData._opponentName.ToUpper();
                 moleScoreText.text = matchData._opponentScore.ToString();
             }
 

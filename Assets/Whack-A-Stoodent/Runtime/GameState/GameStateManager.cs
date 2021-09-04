@@ -335,6 +335,9 @@ namespace WhackAStoodent.GameState
         {
             if (_currentGameState == EGameState.InResultsScreen)
             {
+                //TODO fix once last session code is available
+                //ClientManager.RequestPlayWithSessionCode(ClientManager.LastOpponentSessionCode);
+                ClientManager.Instance.RequestPlayWithRandom();
                 ChangeGameState(EGameState.WaitingForAnswerToPlayRequest);
             }
             else
