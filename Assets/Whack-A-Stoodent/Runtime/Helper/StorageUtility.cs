@@ -12,6 +12,8 @@ namespace WhackAStoodent.Helper
         
         private const string NAME_FILE_PATH = "playerName.file";
         private static string NameFilePath => Application.persistentDataPath + @"\" + NAME_FILE_PATH;
+        private const string IP_FILE_PATH = "ipAdress.file";
+        private static string IPFilePath => Application.persistentDataPath + @"\" + IP_FILE_PATH;
         
         public static Guid? LoadClientGuid()
         {
@@ -39,6 +41,17 @@ namespace WhackAStoodent.Helper
         public static void UpdateClientName(string name)
         {
             File.WriteAllBytes(NameFilePath, Encoding.Unicode.GetBytes(name));
+        }
+
+        public static bool TryLoadIPAddress(out string s)
+        {
+            if (File.Exists(IPFilePath))
+            {
+                s = Encoding.Unicode.GetString(File.ReadAllBytes(IPFilePath));
+                return true;
+            }
+            s = null;
+            return false;
         }
     }
 }

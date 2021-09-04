@@ -46,7 +46,7 @@ namespace WhackAStoodent.Client.Networking.Connectors
         {
             if (GetConnectionSettings(out NetworkConnectionSettings network_connection_settings))
             {
-                _ipAddress = network_connection_settings.ipAddress;
+                _ipAddress = network_connection_settings.IpAddress;
                 _port = network_connection_settings.port;
                 _timeoutTime = network_connection_settings.timeoutTime;
             }
